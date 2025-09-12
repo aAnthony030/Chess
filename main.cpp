@@ -11,10 +11,10 @@ enum PieceTypes {
 
 struct Piece {
     SDL_Texture* texture;
-    int row, col;
     bool isWhite;
     enum PieceTypes type;
     SDL_FRect position;
+    bool alive = true;
 };
 
 vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
@@ -41,41 +41,47 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
 
     for(int i = 0; i < 8; i++) {
         // pieces[0] -> pieces[7]: pedoni bianchi
-        pieces.push_back({whitePawnTexture, i, 1, true, pawn, { float(80*i), float(480), float(80), float(80) } });
+        pieces.push_back({whitePawnTexture, true, pawn, { float(80*i), float(480), float(80), float(80) } });
     }
+
     for(int i = 0; i < 2; i++) {
         // pieces[8] -> pieces[9]: torri bianche
-        pieces.push_back({whiteRookTexture, i * 7, 0, true, rook, { float(i*560), float(560), float(80), float(80) } });
+        pieces.push_back({whiteRookTexture, true, rook, { float(i*560), float(560), float(80), float(80) } });
     }
+
     for(int i = 0; i <= 1; i++) {
         // pieces[10] -> pieces[11]: cavalli bianchi
-        pieces.push_back({whiteKnightTexture, i , 0, true, knight, { float(80 + 400*i), float(560), float(80), float(80) } });
+        pieces.push_back({whiteKnightTexture, true, knight, { float(80 + 400*i), float(560), float(80), float(80) } });
     }
+
     for(int i = 0; i <= 1; i++) {
         // pieces[12] -> pieces[13]: alfieri bianchi
-        pieces.push_back({whiteBishopTexture, i , 0, true, bishop, { float(160 + 240*i), float(560), float(80), float(80) } });
+        pieces.push_back({whiteBishopTexture, true, bishop, { float(160 + 240*i), float(560), float(80), float(80) } });
     }
-    pieces.push_back({whiteQueenTexture, 4 , 0, true, queen, { float(240), float(560), float(80), float(80) } }); //pieces[14]: regina bianca
-    pieces.push_back({whiteKingTexture, 3 , 0, true, king, { float(320), float(560), float(80), float(80) } }); // pieces[15]: re bianco
+    pieces.push_back({whiteQueenTexture, true, queen, { float(320), float(560), float(80), float(80) } }); //pieces[14]: regina bianca
+    pieces.push_back({whiteKingTexture, true, king, { float(240), float(560), float(80), float(80) } }); // pieces[15]: re bianco
 
     for(int i = 0; i < 8; i++) {
         // pieces[16] -> pieces[23]: pedoni neri
-        pieces.push_back({blackPawnTexture, i, 6, false, pawn, { float(80*i), float(80), float(80), float(80) } });
+        pieces.push_back({blackPawnTexture, false, pawn, { float(80*i), float(80), float(80), float(80) } });
     }
+
     for(int i = 0; i < 2; i++) {
         // pieces[24] -> pieces[25]: torri nere
-        pieces.push_back({blackRookTexture, i * 7, 7, false, rook, { float(i*560), float(0), float(80), float(80) } });
+        pieces.push_back({blackRookTexture, false, rook, { float(i*560), float(0), float(80), float(80) } });
     }
+
     for(int i = 0; i <= 1 ; i++) {
         // pieces[26] -> pieces[27]: cavalli neri
-        pieces.push_back({blackKnightTexture, i , 7, false, knight, { float(80 + 400*i), float(0), float(80), float(80) } });
+        pieces.push_back({blackKnightTexture, false, knight, { float(80 + 400*i), float(0), float(80), float(80) } });
     }
+
     for(int i = 0; i <= 1; i++) {
         // pieces[28] -> pieces[29]: alfieri neri
-        pieces.push_back({blackBishopTexture, i , 7, false, bishop, { float(160 + 240*i), float(0), float(80), float(80) } });
+        pieces.push_back({blackBishopTexture, false, bishop, { float(160 + 240*i), float(0), float(80), float(80) } });
     }
-    pieces.push_back({blackQueenTexture, 3 , 7, false, queen, { float(320), float(0), float(80), float(80) } }); //pieces[30]: regina nera
-    pieces.push_back({blackKingTexture, 4 , 7, false, king, { float(240), float(0), float(80), float(80) } }); // pieces[31]: re nero
+    pieces.push_back({blackQueenTexture, false, queen, { float(240), float(0), float(80), float(80) } }); //pieces[30]: regina nera
+    pieces.push_back({blackKingTexture, false, king, { float(320), float(0), float(80), float(80) } }); // pieces[31]: re nero
 
     return pieces;
 }
@@ -113,34 +119,63 @@ int main() {
     while(running){
 
         while (SDL_PollEvent(&event)) {
+        
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
             }
+
+            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+
+                int x = event.button.x;
+                int y = event.button.y;
+
+                for(int i = 0; i < pieces.size(); i++) {
+
+                    //controllo per vedere che il click del mouse corrisponda nella casella di un pezzo della scacc
+                    if( x >= pieces[i].position.x && x <= pieces[i].position.x + pieces[i].position.w &&
+                        y >= pieces[i].position.y && y <= pieces[i].position.y + pieces[i].position.h ) {
+                        
+                        // MOVIMENTO PEZZI
+                        break;
+
+                    }
+
+                }
+
+            }
+
         }
 
+        // render part
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderClear(renderer);
+        SDL_RenderClear(renderer);  
         
         int cellsize = 80;
 
         for(int row = 0; row < 8; row++) {
+
             for(int col = 0; col < 8; col++) {
                 SDL_FRect cell { float(col * cellsize), float(row * cellsize), float(cellsize), float(cellsize)};
 
                 if(!((row +  col) % 2)) {
                     SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
                 }
+
                 else {
                     SDL_SetRenderDrawColor(renderer, 181, 136, 99, 255);  // casella scuro
                 }
                 SDL_RenderFillRect(renderer, &cell);
             }
+
         }
 
         for(int i = 0; i < pieces.size(); i++) {
-            if(pieces[i].texture) {
+
+            if(pieces[i].texture && pieces[i].alive) {
                 SDL_RenderTexture(renderer, pieces[i].texture, nullptr, &pieces[i].position);
             }
+            
+
         }
         SDL_RenderPresent(renderer);                                                   
     }                                                                       

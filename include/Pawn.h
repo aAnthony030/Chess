@@ -43,8 +43,8 @@ class Pawn {
                 
                 else {
                     possibleMoves.push_back({piece.position.x, piece.position.y + cellsize});      // 1 casella avanti
-                    possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + cellsize}); // cattura destra
-                    possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + cellsize}); // cattura sinistra
+                    possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + cellsize}); // cattura destra
+                    possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + cellsize}); // cattura sinistra
                 }
 
             }

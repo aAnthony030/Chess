@@ -3,10 +3,10 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include "Pawn.h"
-#include "Rendering.h"
-#include "LegalMove.h"
-#include "Movement.h"
+#include "include/Pawn.h"
+#include "include/Rendering.h"
+#include "include/LegalMove.h"
+#include "include/Movement.h"
 
 using namespace std;
 
@@ -94,8 +94,8 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
 
 
 int main() {
-    Movement< SDL_Event&, vector<pair<float,float>>&, Piece& > movementC;
-    LegalMove< vector<Piece>, vector<pair<float,float>>&, Piece > legal_moveC;
+    Movement < SDL_Event, vector<pair<float,float>>, Piece&, bool& > movementC;
+    LegalMove < vector<Piece>, vector<pair<float,float>>, Piece > legal_moveC;
     Pawn< Piece > pawnC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
@@ -104,6 +104,7 @@ int main() {
     vector<pair<float,float>> moves;
     bool running = true;
     bool selectedPieceBool = false;
+    bool whiteTurn = true;
 
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
@@ -127,6 +128,7 @@ int main() {
  
     vector<Piece> pieces = PiecesTexture(renderer);
     int selectedPieceIndex;
+
     while(running){
 
         while (SDL_PollEvent(&event)) {
@@ -139,7 +141,7 @@ int main() {
                 
                 int x = event.button.x;
                 int y = event.button.y;
-
+                
                 for(int i = 0; i < pieces.size(); i++) {
 
                     // controllo per vedere che il click del mouse corrisponda  
@@ -150,16 +152,21 @@ int main() {
                         
                         if(!selectedPieceBool) {
                             selectedPieceIndex = i;
+
+                            //controllo per gestione dei turni
+                            if(pieces[selectedPieceIndex].isWhite == whiteTurn) {
+
+                                switch (pieces[selectedPieceIndex].type) {
+                                    
+                                    case PAWN:
+    
+                                        moves = pawnC.pawn_movement(pieces[selectedPieceIndex]); // vettore
+    
+                                        selectedPieceBool = true;
+                                        break;
+
+                            }
                             
-                            switch (pieces[i].type) {
-                                
-                                case PAWN:
-
-                                    moves = pawnC.pawn_movement(pieces[i]); // vettore
-
-                                    selectedPieceBool = true;
-                                    break;
-
                         }
                     
                         break;
@@ -168,28 +175,26 @@ int main() {
 
                         else {
 
+                            
                             switch (pieces[selectedPieceIndex].type) {
-                                    
+
                                 case PAWN:
                                     legal_moveC.CheckMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], whiteTurn);
 
                                     selectedPieceBool = false;
                                     break;
 
                                 
-                            }     
+                            }
+    
                         }
                     
                         break;
 
                     }
-
+                    
                 }
-
-                //else if (selectedPieceBool) {
-
-                //}
 
             }
 

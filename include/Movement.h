@@ -4,13 +4,13 @@
 #include <vector>
 #include <utility>
 
-template <typename T, typename U, typename V, typename X>
+template <typename T, typename U, typename V, typename X, typename Y>
 class Movement {
 
     public:
 
-        void movement(T event, U moves, V& piece, X& whiteTurn) {
-            int cellsize = 80;
+        void movement(T event, U moves, V& piece, X& pieces, y& whiteTurn) {
+            const int cellsize = 80;
             int tempX = piece.position.x;
             int tempY = piece.position.y;
 
@@ -22,6 +22,7 @@ class Movement {
                     piece.position.x = moves[i].first;
                     piece.position.y = moves[i].second;
                     
+                    // controllo che il pezzo sia stato spostato e non deselezionato
                     if(tempX != piece.position.x  || tempY != piece.position.x) {
                         whiteTurn = !whiteTurn;
                     }

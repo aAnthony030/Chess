@@ -12,7 +12,7 @@ class Pawn {
         vector<pair<float,float>> pawn_movement(T& piece) {
             
             vector<pair<float,float>> possibleMoves;
-            int cellsize = 80;
+            const int cellsize = 80;
 
             if(piece.isWhite) {
                 // Primo movimento pedone

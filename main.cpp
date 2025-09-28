@@ -7,6 +7,8 @@
 #include "include/Rendering.h"
 #include "include/LegalMove.h"
 #include "include/Movement.h"
+#include "include/King.h"
+#include "include/Knight.h"
 
 using namespace std;
 
@@ -94,9 +96,11 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
 
 
 int main() {
-    Movement < SDL_Event, vector<pair<float,float>>, Piece&, bool& > movementC;
-    LegalMove < vector<Piece>, vector<pair<float,float>>, Piece > legal_moveC;
-    Pawn< Piece > pawnC;
+    Movement <SDL_Event, vector<pair<float,float>>, Piece&, vector<Piece>&, bool&> movementC;
+    LegalMove <vector<Piece>, vector<pair<float,float>>&, Piece> legal_moveC;
+    Pawn <Piece> pawnC;
+    King <Piece> kingC;
+    Knight <Piece> knightC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
     SDL_Event event;
@@ -160,8 +164,22 @@ int main() {
                                     
                                     case PAWN:
     
-                                        moves = pawnC.pawn_movement(pieces[selectedPieceIndex]); // vettore
+                                        moves = pawnC.pawn_movement(pieces[selectedPieceIndex]);
     
+                                        selectedPieceBool = true;
+                                        break;
+                                    
+                                    case KING:
+
+                                        moves = kingC.king_movement(pieces[selectedPieceIndex]);
+
+                                        selectedPieceBool = true;
+                                        break;
+                                    
+                                    case KNIGHT:
+
+                                        moves = knightC.knight_movement(pieces[selectedPieceIndex]);
+
                                         selectedPieceBool = true;
                                         break;
 
@@ -179,12 +197,25 @@ int main() {
                             switch (pieces[selectedPieceIndex].type) {
 
                                 case PAWN:
-                                    legal_moveC.CheckMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex], whiteTurn);
+                                    legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
+                                    selectedPieceBool = false;
+                                    break;
+                                
+                                case KING:
+                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
                                     break;
 
+                                case KNIGHT:
+                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
+                                    selectedPieceBool = false;
+                                    break;
                                 
                             }
     

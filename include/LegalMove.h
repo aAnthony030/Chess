@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <vector>
+#include <cmath>
 
 template <typename T, typename U, typename V>
 
@@ -30,7 +31,7 @@ class LegalMove {
                 bool occupiedByEnemy = false;
                 bool occupiedByAlly = false;
 
-                // Controllo i pezzi sul board
+                
                 for (int j = 0; j < pieces.size(); j++) {
                     if (moves[i].first == pieces[j].position.x &&
                     moves[i].second == pieces[j].position.y) {
@@ -57,12 +58,12 @@ class LegalMove {
 
                 else if (isDiagonal) {
                     // In diagonale → solo se c'è un nemico
-                    if (occupiedByAlly) invalid = true;
+                    if (!occupiedByEnemy) invalid = true;
                 }
 
                 if (invalid) {
                     moves.erase(moves.begin() + i);
-                    i--; // fondamentale per non saltare un elemento
+                    i--; 
                 }
 
             }
@@ -89,13 +90,14 @@ class LegalMove {
                     if (moves[i].first == pieces[j].position.x && 
                     moves[i].second == pieces[j].position.y && singoloPiece.isWhite == pieces[j].isWhite) {
                         invalid = true;
+                        break;
                     }
 
                 }
                 
                 if (invalid) {
                     moves.erase(moves.begin() + i);
-                    i--; // fondamentale per non saltare un elemento
+                    i--;
                 }
 
             }
@@ -123,17 +125,129 @@ class LegalMove {
                     if (moves[i].first == pieces[j].position.x && 
                     moves[i].second == pieces[j].position.y && singoloPiece.isWhite == pieces[j].isWhite) {
                         invalid = true;
+                        break;
                     }
 
                 }
                 
                 if (invalid) {
                     moves.erase(moves.begin() + i);
-                    i--; // fondamentale per non saltare un elemento
+                    i--;
                 }
 
             }
 
         }   
 
+        //TODO: sistemare logica torre, fare in modo che se c'è un pezzo davanti nemmeno le caselle libere più avanti possano essere usate
+        void checkRookMoves(T pieces, U& moves, V singoloPiece) {
+            
+            const int cellsize = 80;
+            bool invalid;
+            vector<pair<float, float>> pieces_position;
+
+            for (int i = 0; i < moves.size(); i++) {
+
+                bool isForward = (moves[i].first == singoloPiece.position.x);
+                invalid = false;
+
+                // Controllo che la mossa sia dentro la scacchiera
+                if (moves[i].first < 0 || moves[i].first > 640 ||
+                moves[i].second < 0 || moves[i].second > 640) {
+                    invalid = true;
+                }
+
+
+                for(int j = 0; j < pieces.size(); j++) {
+
+                    if (moves[i].first == pieces[j].position.x && 
+                    moves[i].second == pieces[j].position.y && singoloPiece.isWhite == pieces[j].isWhite) {
+                        invalid = true;
+                        pieces_position.push_back({pieces[j].position.x, pieces[j].position.y});
+                        break;
+                    }
+                    
+                    else if (moves[i].first == pieces[j].position.x && 
+                    moves[i].second == pieces[j].position.y && singoloPiece.isWhite != pieces[j].isWhite) {
+                        pieces_position.push_back({pieces[j].position.x, pieces[j].position.y});
+                    }
+
+                }
+                
+                if (invalid) {
+                    moves.erase(moves.begin() + i);
+                    i--;
+                }
+
+            }
+
+            // qui scrivo la logica per eliminare le mosse oltre i pezzi in modo che non vengano scavalcati
+            // TODO: risolvere il merda di problema, potrebbe essere i calcoli negli if
+            int selected_piece_x = singoloPiece.position.x;
+            int selected_piece_y = singoloPiece.position.y; 
+        
+            for (int i = 0; i < moves.size(); i++) {
+                
+                int possible_move_x = moves[i].first;
+                int possible_move_y =  moves[i].second;
+                
+                for (int j = 0; j < pieces_position.size(); j++) {
+                    int non_selected_piece_x = pieces_position[j].first;
+                    int non_selected_piece_y = pieces_position[j].second;
+
+                    // il pezzo è sulla stessa Y, si lavora sulla X
+                    if (selected_piece_y == non_selected_piece_y) {   
+
+                        int dist_move_piece = possible_move_x - selected_piece_x;
+                        int dist_nonSelectedPiece_piece = non_selected_piece_x - selected_piece_x;
+
+                        if (abs(dist_nonSelectedPiece_piece) < abs(dist_move_piece)) {
+                            moves.erase(moves.begin() + i);
+                            i--;
+                            break;
+                        }
+
+                    }
+
+                    // il pezzo è sulla stessa X, si lavora sulla Y
+                    else if (selected_piece_x == non_selected_piece_x) {
+
+                        int dist_move_piece = possible_move_y - selected_piece_y;
+                        int dist_nonSelectedPiece_piece = non_selected_piece_y - selected_piece_y;
+
+                        if (abs(dist_nonSelectedPiece_piece) < abs(dist_move_piece)) {
+                            moves.erase(moves.begin() + i);
+                            i--;
+                            break;
+                        }
+
+                    }
+
+                }
+                
+            }
+                 
+        }
+        
 };
+    /*    
+    if(posizione_pezzo_selezionato - posizione_pezzo_non_scelto < 0) { il pezzo e davanti alla torre
+        if( (80 + 240 - 380) < 0) {
+            elimina posizione
+        }
+
+        else { 80 + 380 - 300 = 160 quindi > 0
+            tieni posizione
+        }
+    
+    }
+    else { il pezzo è dietro alla torre
+        if( (80 + 240 - 380) > 0) {
+            elimina posizione
+        }
+
+        else { 80 + 380 - 300 = 160 quindi < 0
+            tieni posizione
+        }
+    }
+    */

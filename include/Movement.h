@@ -9,7 +9,7 @@ class Movement {
 
     public:
 
-        void movement(T event, U moves, V& piece, X& pieces, y& whiteTurn) {
+        void movement(T event, U moves, V& piece, X& pieces, Y& whiteTurn) {
             const int cellsize = 80;
             int tempX = piece.position.x;
             int tempY = piece.position.y;

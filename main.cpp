@@ -9,6 +9,7 @@
 #include "include/Movement.h"
 #include "include/King.h"
 #include "include/Knight.h"
+#include "include/Rook.h"
 
 using namespace std;
 
@@ -101,6 +102,7 @@ int main() {
     Pawn <Piece> pawnC;
     King <Piece> kingC;
     Knight <Piece> knightC;
+    Rook <Piece> rookC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
     SDL_Event event;
@@ -182,6 +184,13 @@ int main() {
 
                                         selectedPieceBool = true;
                                         break;
+                                
+                                    case ROOK:
+                                    
+                                        moves = rookC.rook_movement(pieces[selectedPieceIndex]);
+
+                                        selectedPieceBool = true;
+                                        break;                                          
 
                             }
                             
@@ -217,6 +226,12 @@ int main() {
                                     selectedPieceBool = false;
                                     break;
                                 
+                                case ROOK:
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
+                                    selectedPieceBool = false;
+                                    break;                                
                             }
     
                         }

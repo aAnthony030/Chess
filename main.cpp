@@ -11,6 +11,7 @@
 #include "include/Knight.h"
 #include "include/Rook.h"
 #include "include/Bishop.h"
+#include "include/Queen.h"
 using namespace std;
 
 enum PieceTypes {
@@ -104,6 +105,7 @@ int main() {
     Knight <Piece> knightC;
     Rook <Piece> rookC;
     Bishop <Piece> bishopC;
+    Queen <Piece> queenC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
     SDL_Event event;
@@ -199,6 +201,13 @@ int main() {
 
                                         selectedPieceBool = true;
                                         break;  
+                                    
+                                    case QUEEN:
+                                    
+                                        moves = queenC.queen_movement(pieces[selectedPieceIndex]);
+
+                                        selectedPieceBool = true;
+                                        break; 
 
                             }
                             
@@ -243,6 +252,14 @@ int main() {
                                 
                                 case BISHOP:
                                     legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
+                                    selectedPieceBool = false;
+                                    break;
+
+                                case QUEEN:
+                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;

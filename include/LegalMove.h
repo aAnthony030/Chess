@@ -6,8 +6,6 @@
 
 template <typename T, typename U, typename V>
 
-
-
 class LegalMove {
     public:
 
@@ -119,7 +117,6 @@ class LegalMove {
                     invalid = true;
                 }
 
-
                 for(int j = 0; j < pieces.size(); j++) {
 
                     if (moves[i].first == pieces[j].position.x && 
@@ -139,7 +136,7 @@ class LegalMove {
 
         }   
 
-        //TODO: sistemare logica torre, fare in modo che se c'è un pezzo davanti nemmeno le caselle libere più avanti possano essere usate
+ 
         void checkRookMoves(T pieces, U& moves, V singoloPiece) {
             
             const int cellsize = 80;
@@ -181,8 +178,6 @@ class LegalMove {
 
             }
 
-            // qui scrivo la logica per eliminare le mosse oltre i pezzi in modo che non vengano scavalcati
-            // TODO: risolvere il merda di problema, potrebbe essere i calcoli negli if
             int selected_piece_x = singoloPiece.position.x;
             int selected_piece_y = singoloPiece.position.y; 
         
@@ -229,25 +224,112 @@ class LegalMove {
                  
         }
         
+
+        void checkBishopMoves(T pieces, U& moves, V singoloPiece) {
+            const int cellsize = 80;
+            bool invalid;
+            vector<pair<float, float>> pieces_position;
+
+            for (int i = 0; i < moves.size(); i++) {
+
+                bool isForward = (moves[i].first == singoloPiece.position.x);
+                invalid = false;
+
+                // Controllo che la mossa sia dentro la scacchiera
+                if (moves[i].first < 0 || moves[i].first > 640 ||
+                moves[i].second < 0 || moves[i].second > 640) {
+                    invalid = true;
+                }
+
+                for(int j = 0; j < pieces.size(); j++) {
+
+                    if (moves[i].first == pieces[j].position.x && 
+                    moves[i].second == pieces[j].position.y) {
+                        
+                        pieces_position.push_back({pieces[j].position.x, pieces[j].position.y});
+                        
+                        if (singoloPiece.isWhite == pieces[j].isWhite) {
+                            invalid = true;
+                        }
+                        
+                        break;
+                    }
+                }
+                                
+                if (invalid) {
+                    moves.erase(moves.begin() + i);
+                    i--;
+                }
+
+            }
+
+            int selected_piece_x = singoloPiece.position.x;
+            int selected_piece_y = singoloPiece.position.y; 
+            int delta_pieces_x, delta_pieces_y, delta_move_x, delta_move_y;
+
+            for (int i = 0; i < moves.size(); i++) {
+                
+                int possible_move_x = moves[i].first;
+                int possible_move_y =  moves[i].second;
+
+                for (int j = 0; j < pieces_position.size(); j++) {
+                    int non_selected_piece_x = pieces_position[j].first;
+                    int non_selected_piece_y = pieces_position[j].second;
+
+                    delta_pieces_x = non_selected_piece_x - selected_piece_x;
+                    delta_pieces_y = non_selected_piece_y - selected_piece_y;
+                    delta_move_x = possible_move_x - selected_piece_x;
+                    delta_move_y = possible_move_y - selected_piece_y;
+
+                    // il pezzo si trova sulla stessa diagonale
+                    if (abs(delta_pieces_x) == abs(delta_pieces_y)) {
+
+                        // destra basso (+ +)
+                        if (delta_pieces_x > 0 && delta_pieces_y > 0) {
+                            if (delta_move_x > delta_pieces_x && delta_move_y > delta_pieces_y) {
+                                moves.erase(moves.begin() + i);
+                                i--;
+                                break;
+                            } 
+
+                        }   
+
+                        // sinistra basso (- +)
+                        else if (delta_pieces_x < 0 && delta_pieces_y > 0) {
+                            if (delta_move_x <delta_pieces_x && delta_move_y > delta_pieces_y) {
+                                moves.erase(moves.begin() + i);
+                                i--;
+                                break;
+                            } 
+
+                        }
+
+                        // destra alto (+ -)
+                        else if (delta_pieces_x > 0 && delta_pieces_y < 0) {
+                            if (delta_move_x > delta_pieces_x && delta_move_y < delta_pieces_y) {
+                                moves.erase(moves.begin() + i);
+                                i--;
+                                break;
+                            }     
+
+                        }
+
+                        // sinistra alto (- -)
+                        else if(delta_pieces_x < 0 && delta_pieces_y < 0) {
+                            if (delta_move_x < delta_pieces_x && delta_move_y < delta_pieces_y) {
+                                moves.erase(moves.begin() + i);
+                                i--;
+                                break;
+                            } 
+
+                        }
+
+                    }
+
+                }
+
+            }
+            
+        }
+
 };
-    /*    
-    if(posizione_pezzo_selezionato - posizione_pezzo_non_scelto < 0) { il pezzo e davanti alla torre
-        if( (80 + 240 - 380) < 0) {
-            elimina posizione
-        }
-
-        else { 80 + 380 - 300 = 160 quindi > 0
-            tieni posizione
-        }
-    
-    }
-    else { il pezzo è dietro alla torre
-        if( (80 + 240 - 380) > 0) {
-            elimina posizione
-        }
-
-        else { 80 + 380 - 300 = 160 quindi < 0
-            tieni posizione
-        }
-    }
-    */

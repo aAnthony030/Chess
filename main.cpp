@@ -10,7 +10,7 @@
 #include "include/King.h"
 #include "include/Knight.h"
 #include "include/Rook.h"
-
+#include "include/Bishop.h"
 using namespace std;
 
 enum PieceTypes {
@@ -103,6 +103,7 @@ int main() {
     King <Piece> kingC;
     Knight <Piece> knightC;
     Rook <Piece> rookC;
+    Bishop <Piece> bishopC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
     SDL_Event event;
@@ -190,7 +191,14 @@ int main() {
                                         moves = rookC.rook_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
-                                        break;                                          
+                                        break;  
+                                    
+                                    case BISHOP:
+                                    
+                                        moves = bishopC.bishop_movement(pieces[selectedPieceIndex]);
+
+                                        selectedPieceBool = true;
+                                        break;  
 
                             }
                             
@@ -231,7 +239,14 @@ int main() {
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
-                                    break;                                
+                                    break; 
+                                
+                                case BISHOP:
+                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
+                                    selectedPieceBool = false;
+                                    break;
                             }
     
                         }

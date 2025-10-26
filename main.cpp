@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <algorithm>
 #include "include/Pawn.h"
 #include "include/Rendering.h"
 #include "include/LegalMove.h"
@@ -95,10 +96,32 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
     return pieces;
 }
 
+void check_capture(vector<Piece>& pieces, Piece piece) {
+    int index = -1;
+    for (int i = 0; i < pieces.size(); i++) {
+        if (pieces[i].position.x == piece.position.x && pieces[i].position.y == piece.position.y
+        && pieces[i].isWhite == piece.isWhite) {
+            index = i;
+            break;
+        }
 
+    }
+
+    for (int i = 0; i < pieces.size(); i++) {
+        if (i == index) {
+            continue;
+        }
+        if (piece.position.x == pieces[i].position.x && piece.position.y == pieces[i].position.y) {
+            pieces.erase(pieces.begin() + i);
+            break;
+        }
+
+    }
+
+}
 
 int main() {
-    Movement <SDL_Event, vector<pair<float,float>>, Piece&, vector<Piece>&, bool&> movementC;
+    Movement <SDL_Event, Piece&, vector<Piece>&> movementC;
     LegalMove <vector<Piece>, vector<pair<float,float>>&, Piece> legal_moveC;
     Pawn <Piece> pawnC;
     King <Piece> kingC;
@@ -209,9 +232,9 @@ int main() {
                                         selectedPieceBool = true;
                                         break; 
 
-                            }
+                                }
                             
-                        }
+                            }
                     
                         break;
                         }
@@ -265,9 +288,10 @@ int main() {
                                     selectedPieceBool = false;
                                     break;
                             }
-    
+
+                            check_capture(pieces, pieces[selectedPieceIndex]);
                         }
-                    
+                        
                         break;
 
                     }

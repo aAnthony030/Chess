@@ -136,7 +136,7 @@ class LegalMove {
 
         }   
 
- 
+        // TODO: sistemare movimento torre che non è esatto (mosse giocabili eliminate)
         void checkRookMoves(T pieces, U& moves, V singoloPiece) {
             
             const int cellsize = 80;
@@ -163,7 +163,7 @@ class LegalMove {
                         pieces_position.push_back({pieces[j].position.x, pieces[j].position.y});
                         break;
                     }
-                    
+                    // !
                     else if (moves[i].first == pieces[j].position.x && 
                     moves[i].second == pieces[j].position.y && singoloPiece.isWhite != pieces[j].isWhite) {
                         pieces_position.push_back({pieces[j].position.x, pieces[j].position.y});

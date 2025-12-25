@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <algorithm>
+#include "include/Piecetypes.h"
 #include "include/Pawn.h"
 #include "include/Rendering.h"
 #include "include/LegalMove.h"
@@ -13,11 +13,15 @@
 #include "include/Rook.h"
 #include "include/Bishop.h"
 #include "include/Queen.h"
-using namespace std;
+#include "include/Promotion.h"
 
-enum PieceTypes {
-    PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING
-};
+using namespace std;
+using PieceTypes::PAWN;
+using PieceTypes::BISHOP;
+using PieceTypes::KNIGHT;
+using PieceTypes::ROOK;
+using PieceTypes::QUEEN;
+using PieceTypes::KING;
 
 struct Piece {
     SDL_Texture* texture;
@@ -137,7 +141,6 @@ int main() {
     bool running = true;
     bool selectedPieceBool = false;
     bool whiteTurn = true;
-
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
         cerr << "Errore inizializzazione SDL: " << SDL_GetError() << endl;
@@ -162,7 +165,6 @@ int main() {
     int selectedPieceIndex;
 
     while(running){
-
         while (SDL_PollEvent(&event)) {
         
             if (event.type == SDL_EVENT_QUIT) {
@@ -248,8 +250,10 @@ int main() {
                                 case PAWN:
                                     legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-
-                                    selectedPieceBool = false;
+                                    selectedPieceBool = false;  
+                                    if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y >= 560)) {
+                                        rendering_promote(pieces[selectedPieceIndex], renderer, window);
+                                    }
                                     break;
                                 
                                 case KING:
@@ -300,16 +304,16 @@ int main() {
 
             }
 
-        }
+        }  
 
-        // render part
-        Rendering(renderer, pieces);                                              
+        Rendering(renderer, pieces, false);
+
     }                                                                       
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     for(auto texture : pieces) {
-        SDL_DestroyTexture(texture.texture); //TODO: modificare e distruggere tutte le texture
+        SDL_DestroyTexture(texture.texture);
     }
     SDL_Quit();
 }

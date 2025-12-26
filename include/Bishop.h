@@ -15,7 +15,6 @@ class Bishop {
         vector<pair<float,float>> bishop_movement(T& piece) {
             
             vector<pair<float,float>> possibleMoves;
-            const int cellsize = 80;
 
             return possibleMoves;
 

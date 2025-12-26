@@ -271,7 +271,7 @@ int main() {
                                     break;
                                 
                                 case ROOK:
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    //legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -286,7 +286,12 @@ int main() {
 
                                 case QUEEN:
                                     legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    //legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    for(int i = 0; i < moves.size(); i++) {
+                                        cout << "x:" << moves[i].first << endl;
+                                        cout << "y:" << moves[i].second << endl;
+                                        cout << "----" << endl;
+                                    }
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;

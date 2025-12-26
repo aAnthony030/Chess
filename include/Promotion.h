@@ -25,9 +25,6 @@ void rendering_promote(T& piece, SDL_Renderer* renderer, SDL_Window* window) {
         piece.isWhite ? IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-knight.png") : IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-knight.png")
     };
 
-    // se la finestra non è più grande essa non permette una scelta adeguata dei pezzi
-    SDL_SetWindowSize(window, 640, 640);
-
     SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
     SDL_RenderClear(renderer);
 
@@ -84,7 +81,5 @@ void rendering_promote(T& piece, SDL_Renderer* renderer, SDL_Window* window) {
         }
 
     }
-        SDL_SetWindowSize(window, 640, 640);
 
-    }
-
+}

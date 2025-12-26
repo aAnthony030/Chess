@@ -14,11 +14,9 @@ class Queen {
         Bishop <T> bishopC;
         vector<pair<float,float>> queen_movement(T& piece) {
             
-            vector<pair<float, float>> bishop = bishopC.bishop_movement(piece);
             vector<pair<float, float>> rook = rookC.rook_movement(piece);
             vector<pair<float, float>> possibleMoves;
 
-            possibleMoves.insert(possibleMoves.end(), bishop.begin(), bishop.end());
             possibleMoves.insert(possibleMoves.end(), rook.begin(), rook.end());
             
             return possibleMoves;

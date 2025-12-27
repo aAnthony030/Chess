@@ -17,8 +17,8 @@ class LegalMove {
                 invalid = false;
 
                 // Controllo che la mossa sia dentro la scacchiera
-                if (moves[i].first < 0 || moves[i].first > 640 ||
-                moves[i].second < 0 || moves[i].second > 640) {
+                if (moves[i].first < 0 || moves[i].first > 560 ||
+                moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
                 }
 
@@ -55,13 +55,16 @@ class LegalMove {
                 }
 
                 else if (isDiagonal) {
-                    // In diagonale → solo se c'è un nemico
-                    if (!occupiedByEnemy) invalid = true;
+                    // In diagonale solo se c'è un nemico o se è valido l'en passant
+                    if (!occupiedByEnemy && !en_passant(singoloPiece, pieces, moves[i]))  {
+                        invalid = true;
+                    }
+
                 }
 
                 if (invalid) {
                     moves.erase(moves.begin() + i);
-                    i--; 
+                    i--;    
                 }
 
             }
@@ -77,8 +80,8 @@ class LegalMove {
                 invalid = false;
 
                 // Controllo che la mossa sia dentro la scacchiera
-                if (moves[i].first < 0 || moves[i].first > 640 ||
-                moves[i].second < 0 || moves[i].second > 640) {
+                if (moves[i].first < 0 || moves[i].first > 560 ||
+                moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
                 }
 
@@ -112,8 +115,8 @@ class LegalMove {
                 invalid = false;
 
                 // Controllo che la mossa sia dentro la scacchiera
-                if (moves[i].first < 0 || moves[i].first > 640 ||
-                moves[i].second < 0 || moves[i].second > 640) {
+                if (moves[i].first < 0 || moves[i].first > 560 ||
+                moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
                 }
 

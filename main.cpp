@@ -14,6 +14,7 @@
 #include "include/Bishop.h"
 #include "include/Queen.h"
 #include "include/Promotion.h"
+#include "include/SpecialMoves.h"
 
 using namespace std;
 using PieceTypes::PAWN;
@@ -29,6 +30,8 @@ struct Piece {
     enum PieceTypes type;
     SDL_FRect position;
     bool alive = true;
+    bool first_move = true;
+    bool vulnerable_enPassant = false;
 };
 
 vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
@@ -141,6 +144,8 @@ int main() {
     bool running = true;
     bool selectedPieceBool = false;
     bool whiteTurn = true;
+    int moves_counter = 0;
+
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
         cerr << "Errore inizializzazione SDL: " << SDL_GetError() << endl;
@@ -247,20 +252,36 @@ int main() {
                             
                             switch (pieces[selectedPieceIndex].type) {
 
-                                case PAWN:
+                                case PAWN: {
                                     legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    int old_y = pieces[selectedPieceIndex].position.y;
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+                                    int delta_y = abs(old_y - pieces[selectedPieceIndex].position.y);
+                                    
+                                    for(int p = 0; p < pieces.size(); p++) {
+                                        pieces[p].vulnerable_enPassant = false;
+                                    }
+                                    if (delta_y == 160) {
+                                        pieces[selectedPieceIndex].vulnerable_enPassant = true;
+                                    }
+                                    
                                     selectedPieceBool = false;  
+
                                     if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y >= 560)) {
                                         rendering_promote(pieces[selectedPieceIndex], renderer, window);
                                     }
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break;
+                                }
                                 
                                 case KING:
                                     legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break;
 
                                 case KNIGHT:
@@ -268,6 +289,8 @@ int main() {
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break;
                                 
                                 case ROOK:
@@ -275,6 +298,8 @@ int main() {
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break; 
                                 
                                 case BISHOP:
@@ -282,6 +307,8 @@ int main() {
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break;
 
                                 case QUEEN:
@@ -290,7 +317,10 @@ int main() {
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
+                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                    moves_counter += 1;
                                     break;
+                                    
                             }
 
                             check_capture(pieces, pieces[selectedPieceIndex]);
@@ -316,4 +346,4 @@ int main() {
         SDL_DestroyTexture(texture.texture);
     }
     SDL_Quit();
-}
+} //TODO: inserire requirements.txt

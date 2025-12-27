@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <vector>
 #include <cmath>
-
+#include "SpecialMoves.h"
 template <typename T, typename U, typename V>
 
 class LegalMove {

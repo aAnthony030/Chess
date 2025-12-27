@@ -49,7 +49,35 @@ class Movement {
 
                 }
 
-            }                    
+            }
+
+            //arrocco
+            if (piece.type == KING) {
+                if (piece.position.x == 480) {
+                    for (int i = 0; i < pieces.size(); i++) {
+                    
+                        if (pieces[i].type == ROOK && (pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 560)) {
+                            pieces[i].position.x = 400;
+                            break;
+                        }
+                    
+                    }
+
+                }
+
+                if(piece.position.x == 160) {
+                    for (int i = 0; i < pieces.size(); i++) {
+                    
+                        if (pieces[i].type == ROOK && (pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 0)) {
+                            pieces[i].position.x = 240;
+                            break;
+                        }
+                    
+                    }
+                    
+                }
+
+            }
 
         }
 

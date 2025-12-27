@@ -75,8 +75,8 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
         // pieces[12] -> pieces[13]: alfieri bianchi
         pieces.push_back({whiteBishopTexture, true, BISHOP, { float(160 + 240*i), float(560), float(80), float(80) } });
     }
-    pieces.push_back({whiteQueenTexture, true, QUEEN, { float(320), float(560), float(80), float(80) } }); //pieces[14]: regina bianca
-    pieces.push_back({whiteKingTexture, true, KING, { float(240), float(560), float(80), float(80) } }); // pieces[15]: re bianco
+    pieces.push_back({whiteQueenTexture, true, QUEEN, { float(240), float(560), float(80), float(80) } }); //pieces[14]: regina bianca
+    pieces.push_back({whiteKingTexture, true, KING, { float(320), float(560), float(80), float(80) } }); // pieces[15]: re bianco
 
     for(int i = 0; i < 8; i++) {
         // pieces[16] -> pieces[23]: pedoni neri
@@ -131,7 +131,7 @@ int main() {
     Movement <SDL_Event, Piece&, vector<Piece>&> movementC;
     LegalMove <vector<Piece>, vector<pair<float,float>>&, Piece> legal_moveC;
     Pawn <Piece> pawnC;
-    King <Piece> kingC;
+    King <Piece, vector<Piece>> kingC;
     Knight <Piece> knightC;
     Rook <Piece> rookC;
     Bishop <Piece> bishopC;
@@ -206,7 +206,7 @@ int main() {
                                     
                                     case KING:
 
-                                        moves = kingC.king_movement(pieces[selectedPieceIndex]);
+                                        moves = kingC.king_movement(pieces[selectedPieceIndex], pieces);
 
                                         selectedPieceBool = true;
                                         break;
@@ -274,7 +274,7 @@ int main() {
                                     moves_counter += 1;
                                     break;
                                 }
-                                
+
                                 case KING:
                                     legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);

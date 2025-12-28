@@ -1,8 +1,10 @@
 #pragma once
 
-template <typename T, typename U>
+#include "Struct.h"
 
-void Rendering(T* renderer, U pieces, bool promotion_call) {
+template <typename T>
+
+void Rendering(T* renderer, vector<Piece> pieces, bool promotion_call) {
         if (promotion_call) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);  

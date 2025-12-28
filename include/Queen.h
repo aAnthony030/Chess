@@ -5,14 +5,15 @@
 #include <utility>
 #include "Bishop.h"
 #include "Rook.h"
+#include "Struct.h"
+
 using namespace std;
 
-template <typename T>
 class Queen {
     public:
-        Rook <T> rookC;
-        Bishop <T> bishopC;
-        vector<pair<float,float>> queen_movement(T& piece) {
+        Rook rookC;
+        Bishop bishopC;
+        vector<pair<float,float>> queen_movement(Piece& piece) {
             
             vector<pair<float, float>> rook = rookC.rook_movement(piece);
             vector<pair<float, float>> possibleMoves;

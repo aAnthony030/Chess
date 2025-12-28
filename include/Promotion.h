@@ -5,6 +5,7 @@
 #include <utility>
 #include "Piecetypes.h"
 #include "Rendering.h"
+#include "Struct.h"
 
 using PieceTypes::PAWN;
 using PieceTypes::BISHOP;
@@ -13,9 +14,8 @@ using PieceTypes::ROOK;
 using PieceTypes::QUEEN;
 using PieceTypes::KING;
 
-template <typename T>
 // se si prova a chiudere il programma quando è in fase di selezione non viene permesso
-void rendering_promote(T& piece, SDL_Renderer* renderer, SDL_Window* window) {
+void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window) {
     const int cellsize = 80;
 
     SDL_Texture* textures[4] = {

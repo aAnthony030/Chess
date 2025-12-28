@@ -15,6 +15,7 @@
 #include "include/Queen.h"
 #include "include/Promotion.h"
 #include "include/SpecialMoves.h"
+#include "include/Struct.h"
 
 using namespace std;
 using PieceTypes::PAWN;
@@ -24,15 +25,6 @@ using PieceTypes::ROOK;
 using PieceTypes::QUEEN;
 using PieceTypes::KING;
 
-struct Piece {
-    SDL_Texture* texture;
-    bool isWhite;
-    enum PieceTypes type;
-    SDL_FRect position;
-    bool alive = true;
-    bool first_move = true;
-    bool vulnerable_enPassant = false;
-};
 
 vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
     SDL_Texture *whiteRookTexture, *whitePawnTexture, *whiteKingTexture, 
@@ -128,14 +120,14 @@ void check_capture(vector<Piece>& pieces, Piece piece) {
 }
 
 int main() {
-    Movement <SDL_Event, Piece&, vector<Piece>&> movementC;
-    LegalMove <vector<Piece>, vector<pair<float,float>>&, Piece> legal_moveC;
-    Pawn <Piece> pawnC;
-    King <Piece, vector<Piece>> kingC;
-    Knight <Piece> knightC;
-    Rook <Piece> rookC;
-    Bishop <Piece> bishopC;
-    Queen <Piece> queenC;
+    Movement <SDL_Event> movementC;
+    LegalMove legal_moveC;
+    Pawn pawnC;
+    King kingC;
+    Knight knightC;
+    Rook rookC;
+    Bishop bishopC;
+    Queen queenC;
     SDL_Renderer* renderer;
     SDL_Window *window; 
     SDL_Event event;
@@ -219,14 +211,14 @@ int main() {
                                         break;
                                 
                                     case ROOK:
-                                    
+                                        // moves qui sarà vuoto per via della creazione delle mosse in LegalMove.h
                                         moves = rookC.rook_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
                                         break;  
                                     
                                     case BISHOP:
-                                    
+                                        // moves qui sarà vuoto per via della creazione delle mosse in LegalMove.h
                                         moves = bishopC.bishop_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
@@ -249,11 +241,10 @@ int main() {
 
                         else {
 
-                            
                             switch (pieces[selectedPieceIndex].type) {
 
                                 case PAWN: {
-                                    legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     int old_y = pieces[selectedPieceIndex].position.y;
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
                                     int delta_y = abs(old_y - pieces[selectedPieceIndex].position.y);
@@ -276,7 +267,7 @@ int main() {
                                 }
 
                                 case KING:
-                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -285,7 +276,7 @@ int main() {
                                     break;
 
                                 case KNIGHT:
-                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -294,7 +285,7 @@ int main() {
                                     break;
                                 
                                 case ROOK:
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -303,7 +294,7 @@ int main() {
                                     break; 
                                 
                                 case BISHOP:
-                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -312,8 +303,8 @@ int main() {
                                     break;
 
                                 case QUEEN:
-                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex], false);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;

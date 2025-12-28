@@ -3,13 +3,14 @@
 #include <SDL3/SDL.h>
 #include <vector>
 #include <utility>
+#include "Struct.h"
 
-template <typename T, typename U, typename V>
+template <typename T>
 class Movement {
 
     public:
 
-        void movement(T event, vector<pair<float,float>> moves, U& piece, V& pieces, bool& whiteTurn) {
+        void movement(T event, vector<pair<float,float>> moves, Piece& piece, vector<Piece>& pieces, bool& whiteTurn) {
             const int cellsize = 80;
             int tempX = piece.position.x;
             int tempY = piece.position.y;

@@ -3,13 +3,14 @@
 #include <SDL3/SDL.h>
 #include <vector>
 #include <utility>
+#include "Struct.h"
+
 using namespace std;
 
-template <typename T, typename U>
 class King {
     public:
 
-        vector<pair<float,float>> king_movement(T& piece, U& pieces) {
+        vector<pair<float,float>> king_movement(Piece& piece, vector<Piece>& pieces) {
             
             vector<pair<float,float>> possibleMoves;
             const int cellsize = 80;

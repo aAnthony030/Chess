@@ -13,14 +13,13 @@ class Queen {
     public:
         Rook rookC;
         Bishop bishopC;
-        vector<pair<float,float>> queen_movement(Piece& piece) {
+        pair<vector<pair<float,float>>, vector<pair<float,float>>> queen_movement(Piece& piece) {
             
+            vector<pair<float, float>> bishop = bishopC.bishop_movement(piece);
             vector<pair<float, float>> rook = rookC.rook_movement(piece);
-            vector<pair<float, float>> possibleMoves;
-
-            possibleMoves.insert(possibleMoves.end(), rook.begin(), rook.end());
             
-            return possibleMoves;
+            
+            return {bishop, rook};
         }
 
 };

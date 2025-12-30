@@ -3,15 +3,15 @@
 #include <SDL3/SDL.h>
 #include <vector>
 #include <utility>
+#include "Struct.h"
 
 using PieceTypes::PAWN;
 using PieceTypes::ROOK;
 using PieceTypes::KING;
 
-template <typename T, typename U>
 
 //TODO: dare nomi più chiari (singoloPiece, pezzo che fa doppio movimento) (enemy_pieces, pezzo che può mangiare il prossimo turno)
-bool en_passant(T singoloPiece, U& enemy_pieces, pair<float,float> move) {
+bool en_passant(Piece singoloPiece, vector<Piece>& enemy_pieces, pair<float,float> move) {
 
     int dir = singoloPiece.isWhite ? -80 : 80;
 
@@ -37,8 +37,7 @@ bool en_passant(T singoloPiece, U& enemy_pieces, pair<float,float> move) {
 }
 
 
-template <typename T, typename U>
-bool castling(T king, U& pieces, bool short_castling) {
+bool castling(Piece king, vector<Piece>& pieces, bool short_castling) {
     const int cellsize = 80;
     int index_rook = -1;
     int rook_x = -1;

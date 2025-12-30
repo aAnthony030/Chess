@@ -133,6 +133,7 @@ int main() {
     SDL_Event event;
 
     vector<pair<float,float>> moves;
+    pair<vector<pair<float, float>>, vector<pair<float,float>>> queen_moves;
     bool running = true;
     bool selectedPieceBool = false;
     bool whiteTurn = true;
@@ -211,14 +212,14 @@ int main() {
                                         break;
                                 
                                     case ROOK:
-                                        // moves qui sarà vuoto per via della creazione delle mosse in LegalMove.h
+
                                         moves = rookC.rook_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
                                         break;  
                                     
                                     case BISHOP:
-                                        // moves qui sarà vuoto per via della creazione delle mosse in LegalMove.h
+
                                         moves = bishopC.bishop_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
@@ -226,7 +227,7 @@ int main() {
                                     
                                     case QUEEN:
                                     
-                                        moves = queenC.queen_movement(pieces[selectedPieceIndex]);
+                                        queen_moves = queenC.queen_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
                                         break; 
@@ -244,7 +245,7 @@ int main() {
                             switch (pieces[selectedPieceIndex].type) {
 
                                 case PAWN: {
-                                    legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     int old_y = pieces[selectedPieceIndex].position.y;
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
                                     int delta_y = abs(old_y - pieces[selectedPieceIndex].position.y);
@@ -267,7 +268,7 @@ int main() {
                                 }
 
                                 case KING:
-                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -276,7 +277,7 @@ int main() {
                                     break;
 
                                 case KNIGHT:
-                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -285,7 +286,7 @@ int main() {
                                     break;
                                 
                                 case ROOK:
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -294,7 +295,7 @@ int main() {
                                     break; 
                                 
                                 case BISHOP:
-                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
@@ -303,8 +304,15 @@ int main() {
                                     break;
 
                                 case QUEEN:
-                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex], false);
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex], false);
+                                    vector<pair<float, float>> bishop_moves = queen_moves.first;
+                                    vector<pair<float, float>> rook_moves = queen_moves.second;
+
+                                    legal_moveC.checkBishopMoves(pieces, bishop_moves, pieces[selectedPieceIndex]);
+                                    legal_moveC.checkRookMoves(pieces, rook_moves, pieces[selectedPieceIndex]);
+                                    moves.clear();
+                                    moves.insert(moves.end(), bishop_moves.begin(), bishop_moves.end());
+                                    moves.insert(moves.end(), rook_moves.begin(), rook_moves.end());
+
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;

@@ -36,7 +36,7 @@ class Movement {
             //en passant check
             if (piece.type == PAWN) {
 
-                for (int i = 0; i < pieces.size(); i++) {
+                for (int i = pieces.size() - 1; i >= 0; i--) {
 
                     if (pieces[i].type != PAWN || pieces[i].isWhite == piece.isWhite) continue;
 
@@ -53,11 +53,12 @@ class Movement {
             }
 
             //arrocco
-            if (piece.type == KING) {
-                if (piece.position.x == 480) {
-                    for (int i = 0; i < pieces.size(); i++) {
+            if (piece.type == KING && piece.first_move) {
+                if (piece.position.x == 480 && (piece.position.y == 0 || piece.position.y == 560)) {
+                    for (int i = pieces.size() - 1; i >= 0; i--) {
                     
-                        if (pieces[i].type == ROOK && (pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 560)) {
+                        if (pieces[i].type == ROOK && pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 560
+                        && pieces[i].first_move && pieces[i].position.y == piece.position.y) {
                             pieces[i].position.x = 400;
                             break;
                         }
@@ -66,10 +67,11 @@ class Movement {
 
                 }
 
-                if(piece.position.x == 160) {
-                    for (int i = 0; i < pieces.size(); i++) {
+                if(piece.position.x == 160 && (piece.position.y == 0 || piece.position.y == 560)) {
+                    for (int i = pieces.size() - 1; i >= 0; i--) {
                     
-                        if (pieces[i].type == ROOK && (pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 0)) {
+                        if (pieces[i].type == ROOK && pieces[i].isWhite == piece.isWhite && pieces[i].position.x == 0
+                        && pieces[i].first_move && pieces[i].position.y == piece.position.y) {
                             pieces[i].position.x = 240;
                             break;
                         }

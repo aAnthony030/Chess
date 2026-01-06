@@ -7,9 +7,6 @@
 
 using namespace std;
 
-        // avendo cambiato metodo per controllare le mosse legali dell'alfiere ora le mosse valide
-        // non vengono generate prima e tolte dopo ma viene fatto il controllo man mano e vengono
-        //aggiunte solo le mosse valide
 class Bishop {
     public:
 

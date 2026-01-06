@@ -476,7 +476,8 @@ class LegalMove {
 
         }
 
-      
+        // questa funzione ha differenza della sua origina non ha la funzione check, in quanto durante il controllo
+        // si finiva in un loop infinito
         void checkRookMovesNoCheck(vector<Piece> pieces, vector<pair<float,float>>& moves, Piece singoloPiece) {
             
             const int cellsize = 80;
@@ -623,7 +624,8 @@ class LegalMove {
 
         }
 
-
+        // questa funzione ha differenza della sua origina non ha la funzione check, in quanto durante il controllo
+        // si finiva in un loop infinito
         void checkBishopMovesNoCheck(vector<Piece> pieces, vector<pair<float,float>>& moves, Piece singoloPiece) {
 
             const int cellsize = 80;
@@ -770,7 +772,6 @@ class LegalMove {
         }
 
         // EX endgame
-
         bool Check(vector<Piece>& pieces, bool whiteTurn) {
 
             Pawn pawnC;
@@ -796,14 +797,29 @@ class LegalMove {
 
             for (int i = 0; i < pieces.size(); i++) {
 
+                moves.clear();
                 if (pieces[i].isWhite != pieces[king_index].isWhite) {
                     switch (pieces[i].type) {
-                                            
-                        case PAWN:
-            
-                            moves = pawnC.pawn_movement(pieces[i]);
+                        // visto che i pedoni mangiano solo in diagonale controlliamo solo quelle
+                        // sennò anche con il semplice movimento conta come se mangiano
+                        case PAWN: {
+                            
+                            int direction = pieces[i].isWhite ? -80 : 80;
+                            
+                            float left_x = pieces[i].position.x - 80;
+                            float diag_y = pieces[i].position.y + direction;
+                            if (left_x >= 0 && left_x <= 560 && diag_y >= 0 && diag_y <= 560) {
+                                moves.push_back({left_x, diag_y});
+                            }
+                            
+                            float right_x = pieces[i].position.x + 80;
+                            if (right_x >= 0 && right_x <= 560 && diag_y >= 0 && diag_y <= 560) {
+                                moves.push_back({right_x, diag_y});
+                            }
+                            
                             break;
-                                            
+                        }     
+
                         case KING:
 
                             moves = kingC.king_movement(pieces[i], pieces);
@@ -817,13 +833,14 @@ class LegalMove {
                         case ROOK:
 
                             moves = rookC.rook_movement(pieces[i]);
+                            checkRookMovesNoCheck(pieces, moves, pieces[i]);
 
                             break;  
                                             
                         case BISHOP:
 
                             moves = bishopC.bishop_movement(pieces[i]);
-
+                            checkBishopMovesNoCheck(pieces, moves, pieces[i]);
                             break;  
                                             
                         case QUEEN:
@@ -836,7 +853,6 @@ class LegalMove {
                             checkRookMovesNoCheck(pieces, rook_moves, pieces[i]);
                             checkBishopMovesNoCheck(pieces, bishop_moves, pieces[i]);
 
-                            moves.clear();
                             moves.insert(moves.end(), bishop_moves.begin(), bishop_moves.end());
                             moves.insert(moves.end(), rook_moves.begin(), rook_moves.end());
                             break; 
@@ -857,31 +873,198 @@ class LegalMove {
             return false;
 
         }
+    
         // simulo la scacchiera per testare ogni possibile mossa e vedere se protegge il re
         bool isMoveLegal(Piece singoloPiece, vector<Piece> pieces, pair<float,float> move) {
+
             for (int i = 0; i < pieces.size(); i++) {
 
-                if (pieces[i].position.x == singoloPiece.position.x && 
-                pieces[i].position.y == singoloPiece.position.y &&
-                pieces[i].isWhite == singoloPiece.isWhite) {
+                if (pieces[i].position.x == move.first &&
+                    pieces[i].position.y == move.second &&
+                    pieces[i].isWhite != singoloPiece.isWhite) {
+
+                    pieces.erase(pieces.begin() + i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < pieces.size(); i++) {
+
+                if (pieces[i].position.x == singoloPiece.position.x &&
+                    pieces[i].position.y == singoloPiece.position.y &&
+                    pieces[i].isWhite == singoloPiece.isWhite) {
 
                     pieces[i].position.x = move.first;
                     pieces[i].position.y = move.second;
                     break;
                 }
+            }
+            
+            return Check(pieces, singoloPiece.isWhite);
+        }
+
+
+        bool Checkmate(vector<Piece>& pieces, bool whiteTurn) {
+            if (!Check(pieces, whiteTurn)) {
+                return false;
+            }
+
+            Pawn pawnC;
+            King  kingC;
+            Knight knightC;
+            Rook rookC;
+            Bishop bishopC;
+            Queen queenC;
+            vector <pair<float,float>> moves;
+
+            for (int i = 0; i < pieces.size(); i++) {
+
+                if (pieces[i].isWhite != whiteTurn) {  
+                    continue;
+                }
+
+                moves.clear();
+
+                switch (pieces[i].type) {
+                    // visto che i pedoni mangiano solo in diagonale controlliamo solo quelle
+                    // sennò anche con il semplice movimento conta come se mangiano
+                    case PAWN: 
+
+                        moves = pawnC.pawn_movement(pieces[i], pieces);
+                        checkPawnMoves(pieces, moves, pieces[i]);  
+                        break;  
+
+                    case KING:
+
+                        moves = kingC.king_movement(pieces[i], pieces);
+                        checkKingMoves(pieces, moves, pieces[i]);
+                        break;
+                                            
+                    case KNIGHT:
+
+                        moves = knightC.knight_movement(pieces[i]);
+                        checkKnightMoves(pieces, moves, pieces[i]);
+                        break;
+                                        
+                    case ROOK:
+
+                        moves = rookC.rook_movement(pieces[i]);
+                        checkRookMoves(pieces, moves, pieces[i]);
+                        break;  
+                                            
+                    case BISHOP:
+
+                        moves = bishopC.bishop_movement(pieces[i]);
+                        checkBishopMoves(pieces, moves, pieces[i]);
+                        break;  
+                                            
+                    case QUEEN:
+
+                        pair<vector<pair<float, float>>, vector<pair<float, float>>> queen_moves = queenC.queen_movement(pieces[i]);
+            
+                        vector<pair<float, float>> bishop_moves = queen_moves.first;
+                        vector<pair<float, float>> rook_moves = queen_moves.second;
+
+                        checkRookMoves(pieces, rook_moves, pieces[i]);
+                        checkBishopMoves(pieces, bishop_moves, pieces[i]);
+
+                        moves.insert(moves.end(), bishop_moves.begin(), bishop_moves.end());
+                        moves.insert(moves.end(), rook_moves.begin(), rook_moves.end());
+                        break; 
+
+                }
+
+                for (int j = 0; j < moves.size(); j++) {
+                    if (!isMoveLegal(pieces[i], pieces, moves[j])) {
+                        return false;
+                    }
+
+                }
 
             }
 
-            return Check(pieces, singoloPiece.isWhite);
+            return true;
 
         }
 
-        void Checkmate() {
-            // TODO
-        }
+        
+        bool Stall(vector<Piece> pieces, bool whiteTurn) {
+            // se il re non è sotto scacco e nessun pezzo a mosse possibili avviene lo stallo
+            if (Check(pieces, whiteTurn)) {
+                return false;
+            }
+    
+            Pawn pawnC;
+            King  kingC;
+            Knight knightC;
+            Rook rookC;
+            Bishop bishopC;
+            Queen queenC;
+            vector <pair<float,float>> moves, temp_moves;
+            moves.clear();
+            for (int i = 0; i < pieces.size(); i++) {
+                if (pieces[i].isWhite != whiteTurn) continue;
 
-        void Stall() {
-            // TODO
+                temp_moves.clear();
+
+                switch (pieces[i].type) {
+
+                    case PAWN:
+
+                        temp_moves = pawnC.pawn_movement(pieces[i], pieces);
+                        checkPawnMoves(pieces, temp_moves, pieces[i]);
+                        break;
+
+                    case KING:
+
+                        temp_moves = kingC.king_movement(pieces[i], pieces);
+                        checkKingMoves(pieces, temp_moves, pieces[i]);
+                        break;
+
+                    case KNIGHT:
+
+                        temp_moves = knightC.knight_movement(pieces[i]);
+                        checkKnightMoves(pieces, temp_moves, pieces[i]);
+                        break;
+
+                    case ROOK:
+
+                        temp_moves = rookC.rook_movement(pieces[i]);
+                        checkRookMoves(pieces, temp_moves, pieces[i]);
+                        break;
+
+                    case BISHOP:
+
+                        checkBishopMoves(pieces, temp_moves, pieces[i]);
+                        break;
+
+                    case QUEEN: {
+
+                        pair<vector<pair<float, float>>, vector<pair<float, float>>> queen_moves = queenC.queen_movement(pieces[i]);
+                        
+                        vector<pair<float, float>> bishop_moves = queen_moves.first;
+                        vector<pair<float, float>> rook_moves   = queen_moves.second;
+
+                        checkBishopMoves(pieces, bishop_moves, pieces[i]);
+                        checkRookMoves(pieces, rook_moves, pieces[i]);
+
+                        temp_moves.insert(temp_moves.end(), bishop_moves.begin(), bishop_moves.end());
+                        temp_moves.insert(temp_moves.end(), rook_moves.begin(), rook_moves.end());
+                        break;
+
+                    }
+                    
+                }
+                moves.insert(moves.begin(), temp_moves.begin(), temp_moves.end());  
+
+            }
+    
+            if (!moves.empty()) {
+                return false;
+            }
+
+            return true;    
+
         }
 
 };

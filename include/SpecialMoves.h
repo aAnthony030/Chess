@@ -36,40 +36,29 @@ bool en_passant(Piece singoloPiece, vector<Piece>& enemy_pieces, pair<float,floa
 
 }
 
-
-bool castling(Piece king, vector<Piece>& pieces, bool short_castling) {
+bool castling(Piece& king, vector<Piece>& pieces, bool short_castling) {
     const int cellsize = 80;
     int index_rook = -1;
-    int rook_x = -1;
-    if (!king.first_move) return false;
-    
-    if (short_castling) {
-        rook_x = 560;
-    }
-    else {
-        rook_x = 0;
-    }
+    int kingY = king.isWhite ? 560 : 0;
 
+    if (king.position.y != kingY) return false;
+    if (!king.first_move) return false;
+    int rook_x = short_castling ? 560 : 0;
     for (int i = 0; i < pieces.size(); i++) {
         if (pieces[i].type == ROOK && pieces[i].isWhite == king.isWhite &&
-        pieces[i].position.x == rook_x) {
+        pieces[i].position.x == rook_x && pieces[i].position.y == kingY && pieces[i].first_move) {
             index_rook = i;
             break;
         }
 
     }
-
-    if (index_rook == -1) {
-        return false;
-    }
-
-    if (!pieces[index_rook].first_move) return false;
-
+    if (index_rook == -1) return false;
+    if (!pieces[index_rook].first_move || !king.first_move) return false;
     if (short_castling) {
 
         for (int i = 0; i < pieces.size(); i++) {
-            if (pieces[i].position.x == 400 && pieces[i].position.y == king.position.y || 
-            pieces[i].position.x == 480 && pieces[i].position.y == king.position.y) {
+            if ((pieces[i].position.x == 400 && pieces[i].position.y == kingY) || 
+            (pieces[i].position.x == 480 && pieces[i].position.y == kingY)) {
                 return false;
             }
 
@@ -79,9 +68,9 @@ bool castling(Piece king, vector<Piece>& pieces, bool short_castling) {
 
     else {
         for (int i = 0; i < pieces.size(); i++) {
-            if (pieces[i].position.x == 80 && pieces[i].position.y == king.position.y || 
-            pieces[i].position.x == 160 && pieces[i].position.y == king.position.y || 
-            pieces[i].position.x == 240 && pieces[i].position.y == king.position.y) {
+            if ((pieces[i].position.x == 80 && pieces[i].position.y == kingY) || 
+            (pieces[i].position.x == 160 && pieces[i].position.y == kingY) || 
+            (pieces[i].position.x == 240 && pieces[i].position.y == kingY)) {
                 return false;
             }
 

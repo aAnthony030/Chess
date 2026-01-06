@@ -192,7 +192,7 @@ int main() {
                                     
                                     case PAWN:
     
-                                        moves = pawnC.pawn_movement(pieces[selectedPieceIndex]);
+                                        moves = pawnC.pawn_movement(pieces[selectedPieceIndex], pieces);
     
                                         selectedPieceBool = true;
                                         break;
@@ -323,6 +323,14 @@ int main() {
                             }
 
                             check_capture(pieces, pieces[selectedPieceIndex]);
+                            if (legal_moveC.Checkmate(pieces, whiteTurn)) {
+                                cout << "CHECKMATE!\n";
+                            }
+
+                            if (legal_moveC.Stall(pieces, whiteTurn)) {
+                                cout << "STALL\n";
+                            }
+
                         }
                         
                         break;

@@ -15,6 +15,7 @@
 #include "include/Queen.h"
 #include "include/Promotion.h"
 #include "include/SpecialMoves.h"
+#include "include/DrawMoves.h"
 #include "include/Struct.h"
 
 using namespace std;
@@ -137,6 +138,7 @@ int main() {
     bool running = true;
     bool selectedPieceBool = false;
     bool whiteTurn = true;
+    bool draw_bool = false;
     int moves_counter = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -198,17 +200,19 @@ int main() {
                                         break;
                                     
                                     case KING:
-
-                                        moves = kingC.king_movement(pieces[selectedPieceIndex], pieces);
-
-                                        selectedPieceBool = true;
+                                        if (!draw_bool) {
+                                            moves = kingC.king_movement(pieces[selectedPieceIndex], pieces);
+    
+                                            selectedPieceBool = true;
+                                        }
                                         break;
                                     
                                     case KNIGHT:
-
-                                        moves = knightC.knight_movement(pieces[selectedPieceIndex]);
-
-                                        selectedPieceBool = true;
+                                        if (!draw_bool) {
+                                            moves = knightC.knight_movement(pieces[selectedPieceIndex]);
+    
+                                            selectedPieceBool = true;
+                                        }
                                         break;
                                 
                                     case ROOK:
@@ -219,10 +223,11 @@ int main() {
                                         break;  
                                     
                                     case BISHOP:
-
-                                        moves = bishopC.bishop_movement(pieces[selectedPieceIndex]);
-
-                                        selectedPieceBool = true;
+                                        if (!draw_bool) {
+                                            moves = bishopC.bishop_movement(pieces[selectedPieceIndex]);
+    
+                                            selectedPieceBool = true;
+                                        }
                                         break;  
                                     
                                     case QUEEN:
@@ -257,7 +262,7 @@ int main() {
                                         pieces[selectedPieceIndex].vulnerable_enPassant = true;
                                     }
                                     
-                                    selectedPieceBool = false;  
+                                    selectedPieceBool = false;
 
                                     if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y >= 560)) {
                                         rendering_promote(pieces[selectedPieceIndex], renderer, window);
@@ -268,21 +273,25 @@ int main() {
                                 }
 
                                 case KING:
-                                    legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-
-                                    selectedPieceBool = false;
-                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    if (!draw_bool) {
+                                        legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                        movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+    
+                                        selectedPieceBool = false;
+                                        if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                        moves_counter += 1;
+                                    }
                                     break;
 
                                 case KNIGHT:
-                                    legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-
-                                    selectedPieceBool = false;
-                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    if (!draw_bool) {
+                                        legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                        movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+    
+                                        selectedPieceBool = false;
+                                        if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                        moves_counter += 1;
+                                    }
                                     break;
                                 
                                 case ROOK:
@@ -295,12 +304,14 @@ int main() {
                                     break; 
                                 
                                 case BISHOP:
-                                    legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-
-                                    selectedPieceBool = false;
-                                    if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    if (!draw_bool) {
+                                        legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+                                        movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+    
+                                        selectedPieceBool = false;
+                                        if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
+                                        moves_counter += 1;
+                                    }
                                     break;
 
                                 case QUEEN:
@@ -331,6 +342,59 @@ int main() {
                                 cout << "STALL\n";
                             }
 
+                            if (pieces.size() == 2 && pieces[0].type == KING && pieces[1].type == KING) {
+                                cout << "DRAW\n";
+                                draw_bool = true;
+                            }
+
+                            if (pieces.size() == 3) {
+                                int kings = 0;
+                                int knight = 0;
+                                int bishop = 0;
+
+                                for (int i = 0; i < pieces.size(); i++) {
+                                    if (pieces[i].type == KING) {
+                                        kings ++;
+                                    }
+                                    if (pieces[i].type == KNIGHT) {
+                                        knight ++;
+                                    }
+                                    if (pieces[i].type == BISHOP) {
+                                        bishop ++;
+                                    }
+
+                                }
+
+                                if (kings == 2 && (bishop == 1 || knight == 1)) {
+                                    cout << "DRAW\n";
+                                    draw_bool = true;
+                                }
+
+                            }
+                            if (pieces.size() == 4) {
+                                int kings = 0;
+                                int knight = 0;
+                                int bishop = 0;
+                                for (int i = 0; i < pieces.size(); i++) {
+                                    if (pieces[i].type == KING) {
+                                        kings ++;
+                                    }
+                                    if (pieces[i].type == KNIGHT) {
+                                        knight ++;
+                                    }
+                                    if (pieces[i].type == BISHOP) {
+                                        bishop ++;
+                                    }
+
+                                }
+
+                                if (kings == 2 && (bishop == 2 || knight == 2)) {
+                                    cout << "DRAW\n";
+                                    draw_bool = true;
+                                }
+                                
+                            }
+
                         }
                         
                         break;
@@ -342,9 +406,13 @@ int main() {
             }
 
         }  
+       
+        if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
+            DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
+        }
+        Rendering(renderer, pieces);
 
-        Rendering(renderer, pieces, false);
-
+        
     }                                                                       
 
     SDL_DestroyRenderer(renderer);

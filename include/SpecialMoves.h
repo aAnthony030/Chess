@@ -10,7 +10,7 @@ using PieceTypes::ROOK;
 using PieceTypes::KING;
 
 
-//TODO: dare nomi più chiari (singoloPiece, pezzo che fa doppio movimento) (enemy_pieces, pezzo che può mangiare il prossimo turno)
+// singoloPiece, pezzo che fa doppio movimento - enemy_pieces, pezzo che può mangiare il prossimo turno
 bool en_passant(Piece singoloPiece, vector<Piece>& enemy_pieces, pair<float,float> move) {
 
     int dir = singoloPiece.isWhite ? -80 : 80;

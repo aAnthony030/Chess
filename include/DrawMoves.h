@@ -14,7 +14,8 @@ using PieceTypes::KING;
 
 template <typename T>
 
-void DrawMoves(vector<Piece> pieces, Piece singoloPiece, vector<pair<float, float>> moves, pair<vector<pair<float, float>>, vector<pair<float,float>>> queen_moves, bool whiteTurn, T* renderer) {
+void DrawMoves(vector<Piece> pieces, Piece singoloPiece, vector<pair<float, float>> moves, 
+pair<vector<pair<float, float>>, vector<pair<float,float>>> queen_moves, bool whiteTurn, T* renderer) {
 
     if (whiteTurn == singoloPiece.isWhite) {
         LegalMove legal_moveC;

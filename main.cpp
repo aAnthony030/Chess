@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -140,14 +141,15 @@ int main() {
     bool whiteTurn = true;
     bool draw_bool = false;
     int moves_counter = 0;
-
+    string moves_text = "test";
+    
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
         cerr << "Errore inizializzazione SDL: " << SDL_GetError() << endl;
         return 1;
     }
 
-    window = SDL_CreateWindow("Chess", 640, 640, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Chess", 820, 640, SDL_WINDOW_RESIZABLE);
     if (!window) {
         cerr << "Errore creazione finestra: " << SDL_GetError() << endl;
         SDL_Quit();
@@ -160,7 +162,20 @@ int main() {
         SDL_Quit();
         return 1;
     }
- 
+
+    TTF_Init();
+    if(!TTF_Init()) {
+        cerr << "Errore inizializzazione TTF: " << SDL_GetError() << endl;
+        return 1;
+    }
+    
+    TTF_Font *font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 24);
+    if (!font) {
+        cerr << "Errore caricamento font: " << SDL_GetError() << endl;
+        return 1;
+    }
+    
+
     vector<Piece> pieces = PiecesTexture(renderer);
     int selectedPieceIndex;
 
@@ -195,8 +210,8 @@ int main() {
                                     case PAWN:
     
                                         moves = pawnC.pawn_movement(pieces[selectedPieceIndex], pieces);
-    
                                         selectedPieceBool = true;
+                                        moves_text = "PAWN";
                                         break;
                                     
                                     case KING:
@@ -205,6 +220,7 @@ int main() {
     
                                             selectedPieceBool = true;
                                         }
+                                        moves_text = "KING";
                                         break;
                                     
                                     case KNIGHT:
@@ -213,6 +229,7 @@ int main() {
     
                                             selectedPieceBool = true;
                                         }
+                                        moves_text = "KNIGHT";
                                         break;
                                 
                                     case ROOK:
@@ -220,6 +237,7 @@ int main() {
                                         moves = rookC.rook_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
+                                        moves_text = "ROOK";
                                         break;  
                                     
                                     case BISHOP:
@@ -228,6 +246,7 @@ int main() {
     
                                             selectedPieceBool = true;
                                         }
+                                        moves_text = "BISHOP";
                                         break;  
                                     
                                     case QUEEN:
@@ -235,6 +254,7 @@ int main() {
                                         queen_moves = queenC.queen_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
+                                        moves_text = "QUEEN";
                                         break; 
 
                                 }
@@ -412,13 +432,26 @@ int main() {
         }
         Rendering(renderer, pieces);
 
+        SDL_Color white = {255, 255, 255, 255};
+        SDL_Surface *text_surface = TTF_RenderText_Solid(font, moves_text.c_str(), strlen(moves_text.c_str()), white);
+        if (text_surface) {
+            SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
+            SDL_FRect text_rect = {640, 10, (float)text_surface->w, (float)text_surface->h};
+            SDL_DestroySurface(text_surface);
+            SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
+            SDL_DestroyTexture(text_tex);
+        }
+
+        SDL_RenderPresent(renderer);
         
     }                                                                       
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
     for(auto texture : pieces) {
         SDL_DestroyTexture(texture.texture);
     }
+    TTF_Quit();
     SDL_Quit();
 } //TODO: inserire requirements.txt

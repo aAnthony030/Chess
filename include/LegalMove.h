@@ -820,11 +820,14 @@ class LegalMove {
                             break;
                         }     
 
-                        case KING:
+                        case KING: {
 
-                            moves = kingC.king_movement(pieces[i], pieces);
+                            bool short_castle = false;
+                            bool long_castle = false;
+                            moves = kingC.king_movement(pieces[i], pieces, short_castle, long_castle);
                             break;
-                                            
+                        }
+                                       
                         case KNIGHT:
 
                             moves = knightC.knight_movement(pieces[i]);
@@ -934,12 +937,15 @@ class LegalMove {
                         checkPawnMoves(pieces, moves, pieces[i]);  
                         break;  
 
-                    case KING:
+                    case KING: {
 
-                        moves = kingC.king_movement(pieces[i], pieces);
+                        bool short_castle = false;
+                        bool long_castle = false;
+                        moves = kingC.king_movement(pieces[i], pieces, short_castle, long_castle);
                         checkKingMoves(pieces, moves, pieces[i]);
                         break;
-                                            
+                    }
+
                     case KNIGHT:
 
                         moves = knightC.knight_movement(pieces[i]);
@@ -1015,11 +1021,14 @@ class LegalMove {
                         checkPawnMoves(pieces, temp_moves, pieces[i]);
                         break;
 
-                    case KING:
+                    case KING: {
 
-                        temp_moves = kingC.king_movement(pieces[i], pieces);
+                        bool short_castle = false;
+                        bool long_castle = false;
+                        temp_moves = kingC.king_movement(pieces[i], pieces, short_castle, long_castle);
                         checkKingMoves(pieces, temp_moves, pieces[i]);
                         break;
+                    }
 
                     case KNIGHT:
 

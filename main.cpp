@@ -17,6 +17,7 @@
 #include "include/Promotion.h"
 #include "include/SpecialMoves.h"
 #include "include/DrawMoves.h"
+#include "include/SidebarMoves.h"
 #include "include/Struct.h"
 
 using namespace std;
@@ -140,8 +141,16 @@ int main() {
     bool selectedPieceBool = false;
     bool whiteTurn = true;
     bool draw_bool = false;
-    int moves_counter = 0;
-    string moves_text = "test";
+    bool short_castle = false;
+    bool long_castle = false;
+    bool checkmate = false;
+    bool check = false;
+    bool promotion = false;
+    int moves_counter = 1;
+    int turn;
+    int pieces_number;
+    int old_x, old_y;
+    vector<string> moves_text;
     
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
@@ -211,16 +220,14 @@ int main() {
     
                                         moves = pawnC.pawn_movement(pieces[selectedPieceIndex], pieces);
                                         selectedPieceBool = true;
-                                        moves_text = "PAWN";
                                         break;
                                     
                                     case KING:
                                         if (!draw_bool) {
-                                            moves = kingC.king_movement(pieces[selectedPieceIndex], pieces);
+                                            moves = kingC.king_movement(pieces[selectedPieceIndex], pieces, short_castle, long_castle);
     
                                             selectedPieceBool = true;
                                         }
-                                        moves_text = "KING";
                                         break;
                                     
                                     case KNIGHT:
@@ -229,7 +236,6 @@ int main() {
     
                                             selectedPieceBool = true;
                                         }
-                                        moves_text = "KNIGHT";
                                         break;
                                 
                                     case ROOK:
@@ -237,7 +243,6 @@ int main() {
                                         moves = rookC.rook_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
-                                        moves_text = "ROOK";
                                         break;  
                                     
                                     case BISHOP:
@@ -246,7 +251,6 @@ int main() {
     
                                             selectedPieceBool = true;
                                         }
-                                        moves_text = "BISHOP";
                                         break;  
                                     
                                     case QUEEN:
@@ -254,7 +258,6 @@ int main() {
                                         queen_moves = queenC.queen_movement(pieces[selectedPieceIndex]);
 
                                         selectedPieceBool = true;
-                                        moves_text = "QUEEN";
                                         break; 
 
                                 }
@@ -271,8 +274,11 @@ int main() {
 
                                 case PAWN: {
                                     legal_moveC.checkPawnMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    int old_y = pieces[selectedPieceIndex].position.y;
+                                    old_x = pieces[selectedPieceIndex].position.x;
+                                    old_y = pieces[selectedPieceIndex].position.y;
+                                    pieces_number = pieces.size();
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+
                                     int delta_y = abs(old_y - pieces[selectedPieceIndex].position.y);
                                     
                                     for(int p = 0; p < pieces.size(); p++) {
@@ -286,55 +292,86 @@ int main() {
 
                                     if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y >= 560)) {
                                         rendering_promote(pieces[selectedPieceIndex], renderer, window);
+                                        promotion = true;
                                     }
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    moves_counter ++;
                                     break;
                                 }
 
-                                case KING:
+                                case KING: {
                                     if (!draw_bool) {
                                         legal_moveC.checkKingMoves(pieces, moves, pieces[selectedPieceIndex]);
+
+                                        old_x = pieces[selectedPieceIndex].position.x;
+                                        old_y = pieces[selectedPieceIndex].position.y;
+                                        pieces_number = pieces.size();
                                         movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-    
+
                                         selectedPieceBool = false;
                                         if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                        moves_counter += 1;
+                                        moves_counter ++;
                                     }
+
+
                                     break;
 
-                                case KNIGHT:
+                                }
+
+                                case KNIGHT: {
                                     if (!draw_bool) {
                                         legal_moveC.checkKnightMoves(pieces, moves, pieces[selectedPieceIndex]);
+
+                                        old_x = pieces[selectedPieceIndex].position.x;
+                                        old_y = pieces[selectedPieceIndex].position.y;
+                                        pieces_number = pieces.size();
                                         movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-    
+
                                         selectedPieceBool = false;
                                         if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                        moves_counter += 1;
+                                        moves_counter ++;
                                     }
+
+
                                     break;
                                 
-                                case ROOK:
-                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
-                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
+                                }
 
+                                case ROOK: {
+                                    legal_moveC.checkRookMoves(pieces, moves, pieces[selectedPieceIndex]);
+
+                                    old_x = pieces[selectedPieceIndex].position.x;
+                                    old_y = pieces[selectedPieceIndex].position.y;
+                                    pieces_number = pieces.size();
+                                    movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
                                     selectedPieceBool = false;
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    moves_counter ++;
+
+
                                     break; 
                                 
-                                case BISHOP:
+                                }
+
+                                case BISHOP: {
                                     if (!draw_bool) {
                                         legal_moveC.checkBishopMoves(pieces, moves, pieces[selectedPieceIndex]);
+
+                                        old_x = pieces[selectedPieceIndex].position.x;
+                                        old_y = pieces[selectedPieceIndex].position.y;
+                                        pieces_number = pieces.size();
                                         movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
-    
+
                                         selectedPieceBool = false;
                                         if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                        moves_counter += 1;
+                                        moves_counter ++;
                                     }
-                                    break;
 
-                                case QUEEN:
+
+                                    break;
+                                }
+
+                                case QUEEN: {
                                     vector<pair<float, float>> bishop_moves = queen_moves.first;
                                     vector<pair<float, float>> rook_moves = queen_moves.second;
 
@@ -344,34 +381,43 @@ int main() {
                                     moves.insert(moves.end(), bishop_moves.begin(), bishop_moves.end());
                                     moves.insert(moves.end(), rook_moves.begin(), rook_moves.end());
 
+                                    old_x = pieces[selectedPieceIndex].position.x;
+                                    old_y = pieces[selectedPieceIndex].position.y;
+                                    pieces_number = pieces.size();
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
                                     selectedPieceBool = false;
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter += 1;
+                                    moves_counter ++;
+
+
                                     break;
+                                }
                                     
                             }
-
+                            
                             check_capture(pieces, pieces[selectedPieceIndex]);
-                            if (legal_moveC.Checkmate(pieces, whiteTurn)) {
-                                cout << "CHECKMATE!\n";
-                            }
+                            bool piece_eat = (pieces.size() < pieces_number);
 
+                            
+                            if (legal_moveC.Checkmate(pieces, whiteTurn)) {
+                                checkmate = true;
+                            }
+                            
                             if (legal_moveC.Stall(pieces, whiteTurn)) {
                                 cout << "STALL\n";
                             }
-
+                            
                             if (pieces.size() == 2 && pieces[0].type == KING && pieces[1].type == KING) {
                                 cout << "DRAW\n";
                                 draw_bool = true;
                             }
-
+                            
                             if (pieces.size() == 3) {
                                 int kings = 0;
                                 int knight = 0;
                                 int bishop = 0;
-
+                                
                                 for (int i = 0; i < pieces.size(); i++) {
                                     if (pieces[i].type == KING) {
                                         kings ++;
@@ -382,14 +428,14 @@ int main() {
                                     if (pieces[i].type == BISHOP) {
                                         bishop ++;
                                     }
-
+                                    
                                 }
-
+                                
                                 if (kings == 2 && (bishop == 1 || knight == 1)) {
                                     cout << "DRAW\n";
                                     draw_bool = true;
                                 }
-
+                                
                             }
                             if (pieces.size() == 4) {
                                 int kings = 0;
@@ -405,24 +451,31 @@ int main() {
                                     if (pieces[i].type == BISHOP) {
                                         bishop ++;
                                     }
-
+                                    
                                 }
-
+                                
                                 if (kings == 2 && (bishop == 2 || knight == 2)) {
                                     cout << "DRAW\n";
                                     draw_bool = true;
                                 }
                                 
+                                turn = moves_counter / 2;
+                                
                             }
 
+                            if (old_x != pieces[selectedPieceIndex].position.x || 
+                            old_y != pieces[selectedPieceIndex].position.y) {
+                                MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type, moves_text, piece_eat, short_castle, long_castle, check, checkmate, promotion);
+                            }
+                            
                         }
                         
                         break;
-
+                        
                     }
                     
                 }
-
+                
             }
 
         }  
@@ -432,14 +485,35 @@ int main() {
         }
         Rendering(renderer, pieces);
 
+        // sidebar text
         SDL_Color white = {255, 255, 255, 255};
-        SDL_Surface *text_surface = TTF_RenderText_Solid(font, moves_text.c_str(), strlen(moves_text.c_str()), white);
-        if (text_surface) {
-            SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
-            SDL_FRect text_rect = {640, 10, (float)text_surface->w, (float)text_surface->h};
-            SDL_DestroySurface(text_surface);
-            SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
-            SDL_DestroyTexture(text_tex);
+        int spacing;
+        for (int i = 0; i < moves_text.size(); i++) {
+            
+            SDL_Surface *text_surface = TTF_RenderText_Solid(font, moves_text[i].c_str(), strlen(moves_text[i].c_str()), white);
+            spacing = (i * 25);
+            if (text_surface) {
+                
+                SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
+                SDL_FRect text_rect = {710, float(45 + spacing), (float)text_surface->w, (float)text_surface->h};
+                SDL_DestroySurface(text_surface);
+                
+                SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
+                SDL_DestroyTexture(text_tex);
+            }
+
+        }
+
+        string turn_text = whiteTurn ? "Turn: White" : "Turn: Black";
+        SDL_Surface *turn_surface = TTF_RenderText_Solid(font, turn_text.c_str(), strlen(turn_text.c_str()), white);
+
+        if (turn_surface) {
+            SDL_Texture* turn_tex = SDL_CreateTextureFromSurface(renderer, turn_surface);
+            SDL_FRect turn_rect = {670, 10, (float)turn_surface->w, (float)turn_surface->h};
+            SDL_DestroySurface(turn_surface);
+
+            SDL_RenderTexture(renderer, turn_tex, NULL, &turn_rect);
+            SDL_DestroyTexture(turn_tex);
         }
 
         SDL_RenderPresent(renderer);
@@ -454,4 +528,4 @@ int main() {
     }
     TTF_Quit();
     SDL_Quit();
-} //TODO: inserire requirements.txt
+}

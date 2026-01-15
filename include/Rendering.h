@@ -28,10 +28,7 @@ void Rendering(T* renderer, vector<Piece> pieces) {
             }
     
         }
-
-        SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-        SDL_FRect sidebar = {640, 0, 180, 640};
-        SDL_RenderFillRect(renderer, &sidebar);
+        SidebarRendering(renderer);
             
         for(int i = 0; i < pieces.size(); i++) {
     
@@ -43,4 +40,12 @@ void Rendering(T* renderer, vector<Piece> pieces) {
         }
         SDL_RenderPresent(renderer);
 
+}
+
+template <typename T>
+
+void SidebarRendering(T* renderer) {
+        SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+        SDL_FRect sidebar = {640, 0, 180, 640};
+        SDL_RenderFillRect(renderer, &sidebar);
 }

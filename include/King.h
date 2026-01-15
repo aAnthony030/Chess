@@ -10,7 +10,7 @@ using namespace std;
 class King {
     public:
 
-        vector<pair<float,float>> king_movement(Piece& piece, vector<Piece>& pieces) {
+        vector<pair<float,float>> king_movement(Piece& piece, vector<Piece>& pieces, bool& short_castle, bool& long_castle) {
             
             vector<pair<float,float>> possibleMoves;
             const int cellsize = 80;
@@ -26,9 +26,11 @@ class King {
             possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + cellsize}); // Re in basso destra
             if (castling(piece, pieces, true)) {
                 possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y}); // arrocco corto
+                short_castle = true;
             }
             if (castling(piece, pieces, false)) {
                 possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y}); // arrocco lungo
+                long_castle = false;
             }
 
             return possibleMoves;

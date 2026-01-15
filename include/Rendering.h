@@ -46,6 +46,6 @@ template <typename T>
 
 void SidebarRendering(T* renderer) {
         SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
-        SDL_FRect sidebar = {640, 0, 180, 640};
+        SDL_FRect sidebar = {640, 0, 200, 640};
         SDL_RenderFillRect(renderer, &sidebar);
 }

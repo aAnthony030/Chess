@@ -15,7 +15,7 @@ using PieceTypes::QUEEN;
 using PieceTypes::KING;
 
 // se si prova a chiudere il programma quando è in fase di selezione non viene permesso
-void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window) {
+void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion) {
     const int cellsize = 80;
 
     SDL_Texture* textures[4] = {
@@ -71,6 +71,7 @@ void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window)
 
                         piece.texture = textures[i];
                         chosen = true;
+                        promotion = false;
                         break;
                     }
 

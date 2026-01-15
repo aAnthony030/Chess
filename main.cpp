@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+//#include <SDL3_mixer/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -36,19 +37,19 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
                 *blackQueenTexture, *blackBishopTexture, *blackKnightTexture;   
     vector<Piece> pieces;
     //pezzi bianchi
-    whiteRookTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-rook.png");
-    whitePawnTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-pawn.png");
-    whiteKingTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-king.png");
-    whiteQueenTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-queen.png");
-    whiteBishopTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-bishop.png");
-    whiteKnightTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-knight.png");
+    whiteRookTexture = IMG_LoadTexture(renderer, "pieces/white-rook.png");
+    whitePawnTexture = IMG_LoadTexture(renderer, "pieces/white-pawn.png");
+    whiteKingTexture = IMG_LoadTexture(renderer, "pieces/white-king.png");
+    whiteQueenTexture = IMG_LoadTexture(renderer, "pieces/white-queen.png");
+    whiteBishopTexture = IMG_LoadTexture(renderer, "pieces/white-bishop.png");
+    whiteKnightTexture = IMG_LoadTexture(renderer, "pieces/white-knight.png");
     //pezzi neri
-    blackRookTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-rook.png");
-    blackPawnTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-pawn.png");
-    blackKingTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-king.png");
-    blackQueenTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-queen.png");
-    blackBishopTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-bishop.png");
-    blackKnightTexture = IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-knight.png");
+    blackRookTexture = IMG_LoadTexture(renderer, "pieces/black-rook.png");
+    blackPawnTexture = IMG_LoadTexture(renderer, "pieces/black-pawn.png");
+    blackKingTexture = IMG_LoadTexture(renderer, "pieces/black-king.png");
+    blackQueenTexture = IMG_LoadTexture(renderer, "pieces/black-queen.png");
+    blackBishopTexture = IMG_LoadTexture(renderer, "pieces/black-bishop.png");
+    blackKnightTexture = IMG_LoadTexture(renderer, "pieces/black-knight.png");
 
 
     for(int i = 0; i < 8; i++) {
@@ -146,10 +147,14 @@ int main() {
     bool checkmate = false;
     bool check = false;
     bool promotion = false;
+    bool waiting_promotion = false;
     int moves_counter = 1;
     int turn;
     int pieces_number;
     int old_x, old_y;
+    char row_chr = '\0';
+    char col_chr = '\0';
+    char type_chr = '\0';
     vector<string> moves_text;
     
     SDL_Init(SDL_INIT_VIDEO);
@@ -158,7 +163,7 @@ int main() {
         return 1;
     }
 
-    window = SDL_CreateWindow("Chess", 820, 640, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Chess", 840, 640, SDL_WINDOW_RESIZABLE);
     if (!window) {
         cerr << "Errore creazione finestra: " << SDL_GetError() << endl;
         SDL_Quit();
@@ -178,13 +183,23 @@ int main() {
         return 1;
     }
     
-    TTF_Font *font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 24);
+    TTF_Font *font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 22);
     if (!font) {
         cerr << "Errore caricamento font: " << SDL_GetError() << endl;
         return 1;
     }
-    
+    /*
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        cerr << "Errore Mix_OpenAudio: " << Mix_GetError() << endl;
+    }
 
+    Mix_Chunk* = movement_sound = Mix_LoadWAV("/sounds/movement_sound.waw");
+    Mix_Chunk* = victory = Mix_LoadWAW("/sounds/chess_victory.waw");
+
+    if (!movement_sound || !victory) {
+        ceer << "Errore caricamento suoni: " << Mig_GetError() << endl;
+    }
+    */
     vector<Piece> pieces = PiecesTexture(renderer);
     int selectedPieceIndex;
 
@@ -195,7 +210,7 @@ int main() {
                 running = false;
             }
 
-            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN ) {
+            else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && !promotion) {
                 
                 int x = event.button.x;
                 int y = event.button.y;
@@ -290,10 +305,23 @@ int main() {
                                     
                                     selectedPieceBool = false;
 
-                                    if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y >= 560)) {
-                                        rendering_promote(pieces[selectedPieceIndex], renderer, window);
+                                    if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && 
+                                    pieces[selectedPieceIndex].position.y >= 560)) {
+
+                                        row_chr = 'a' + (pieces[selectedPieceIndex].position.x / 80);
+                                        col_chr = '8' - (pieces[selectedPieceIndex].position.y / 80);
+                                        type_chr;
+                                        switch(pieces[selectedPieceIndex].type) {
+                                            case BISHOP: type_chr = 'B'; break;
+                                            case ROOK: type_chr = 'R'; break;
+                                            case KING: type_chr = 'K'; break;
+                                            case QUEEN: type_chr = 'Q'; break;
+                                            case KNIGHT: type_chr = 'N'; break;
+                                        }
+                                        waiting_promotion = true;
                                         promotion = true;
                                     }
+
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
                                     moves_counter ++;
                                     break;
@@ -308,6 +336,7 @@ int main() {
                                         pieces_number = pieces.size();
                                         movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn);
 
+                                        //if (abs(old_x - pieces[selectedPieceIndex].position.x) == 160) long_castle = true;
                                         selectedPieceBool = false;
                                         if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
                                         moves_counter ++;
@@ -402,6 +431,7 @@ int main() {
                             
                             if (legal_moveC.Checkmate(pieces, whiteTurn)) {
                                 checkmate = true;
+                                //Mix_PlayChannel(-1, victory, 0);
                             }
                             
                             if (legal_moveC.Stall(pieces, whiteTurn)) {
@@ -462,10 +492,11 @@ int main() {
                                 turn = moves_counter / 2;
                                 
                             }
+                            if ((old_x != pieces[selectedPieceIndex].position.x || 
+                            old_y != pieces[selectedPieceIndex].position.y)) {
+                                MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type,
+                                moves_text, piece_eat, short_castle, long_castle, check, checkmate, promotion, row_chr, col_chr, type_chr, whiteTurn);
 
-                            if (old_x != pieces[selectedPieceIndex].position.x || 
-                            old_y != pieces[selectedPieceIndex].position.y) {
-                                MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type, moves_text, piece_eat, short_castle, long_castle, check, checkmate, promotion);
                             }
                             
                         }
@@ -479,12 +510,24 @@ int main() {
             }
 
         }  
-       
-        if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
-            DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
-        }
-        Rendering(renderer, pieces);
 
+        if (promotion) {
+            rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion);
+
+            bool piece_eat = (pieces.size() < pieces_number);
+            
+        }
+        else {
+
+            if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
+                DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
+            }
+    
+            Rendering(renderer, pieces);
+
+        }
+
+        //TODO: sistemare problema promotion e completare sidebar
         // sidebar text
         SDL_Color white = {255, 255, 255, 255};
         int spacing;
@@ -495,7 +538,7 @@ int main() {
             if (text_surface) {
                 
                 SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
-                SDL_FRect text_rect = {710, float(45 + spacing), (float)text_surface->w, (float)text_surface->h};
+                SDL_FRect text_rect = {680, float(45 + spacing), (float)text_surface->w, (float)text_surface->h};
                 SDL_DestroySurface(text_surface);
                 
                 SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
@@ -503,15 +546,15 @@ int main() {
             }
 
         }
-
+            
         string turn_text = whiteTurn ? "Turn: White" : "Turn: Black";
         SDL_Surface *turn_surface = TTF_RenderText_Solid(font, turn_text.c_str(), strlen(turn_text.c_str()), white);
-
+    
         if (turn_surface) {
             SDL_Texture* turn_tex = SDL_CreateTextureFromSurface(renderer, turn_surface);
-            SDL_FRect turn_rect = {670, 10, (float)turn_surface->w, (float)turn_surface->h};
+            SDL_FRect turn_rect = {680, 10, (float)turn_surface->w, (float)turn_surface->h};
             SDL_DestroySurface(turn_surface);
-
+    
             SDL_RenderTexture(renderer, turn_tex, NULL, &turn_rect);
             SDL_DestroyTexture(turn_tex);
         }

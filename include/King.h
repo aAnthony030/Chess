@@ -30,7 +30,7 @@ class King {
             }
             if (castling(piece, pieces, false)) {
                 possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y}); // arrocco lungo
-                long_castle = false;
+                long_castle = true;
             }
 
             return possibleMoves;

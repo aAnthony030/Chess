@@ -15,14 +15,14 @@ using PieceTypes::QUEEN;
 using PieceTypes::KING;
 
 // se si prova a chiudere il programma quando è in fase di selezione non viene permesso
-void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion) {
+void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion, enum PieceTypes& promotionPieceType) {
     const int cellsize = 80;
 
     SDL_Texture* textures[4] = {
-        piece.isWhite ? IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-rook.png") : IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-rook.png"),
-        piece.isWhite ? IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-queen.png") : IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-queen.png"),
-        piece.isWhite ? IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-bishop.png") : IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-bishop.png"),
-        piece.isWhite ? IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\white-knight.png") : IMG_LoadTexture(renderer, "C:\\Projects\\Game\\pieces\\black-knight.png")
+        piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-rook.png") : IMG_LoadTexture(renderer, "pieces/black-rook.png"),
+        piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-queen.png") : IMG_LoadTexture(renderer, "pieces/black-queen.png"),
+        piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-bishop.png") : IMG_LoadTexture(renderer, "pieces/black-bishop.png"),
+        piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-knight.png") : IMG_LoadTexture(renderer, "pieces/black-knight.png")
     };
 
     SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
@@ -53,25 +53,28 @@ void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window,
 
                             case 0:
                                 piece.type = ROOK;
+                                promotionPieceType = ROOK;
                                 break;
 
                             case 1:
                                 piece.type = QUEEN;
+                                promotionPieceType = QUEEN;
                                 break;
 
                             case 2:
                                 piece.type = BISHOP;
+                                promotionPieceType = BISHOP;
                                 break;
 
                             case 3:
                                 piece.type = KNIGHT;
+                                promotionPieceType = KNIGHT;
                                 break;
 
                         }
 
                         piece.texture = textures[i];
                         chosen = true;
-                        promotion = false;
                         break;
                     }
 

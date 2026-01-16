@@ -99,23 +99,17 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
     return pieces;
 }
 
-void check_capture(vector<Piece>& pieces, Piece piece) {
-    int index = -1;
+void check_capture(vector<Piece>& pieces, int& selectedPieceIndex) {
     for (int i = 0; i < pieces.size(); i++) {
-        if (pieces[i].position.x == piece.position.x && pieces[i].position.y == piece.position.y
-        && pieces[i].isWhite == piece.isWhite) {
-            index = i;
-            break;
-        }
-
-    }
-
-    for (int i = 0; i < pieces.size(); i++) {
-        if (i == index) {
+        if (i == selectedPieceIndex) {
             continue;
         }
-        if (piece.position.x == pieces[i].position.x && piece.position.y == pieces[i].position.y) {
+        if (pieces[selectedPieceIndex].position.x == pieces[i].position.x && pieces[selectedPieceIndex].position.y == pieces[i].position.y) {
             pieces.erase(pieces.begin() + i);
+
+            if (i < selectedPieceIndex) {
+                selectedPieceIndex--;
+            }
             break;
         }
 
@@ -147,14 +141,16 @@ int main() {
     bool checkmate = false;
     bool check = false;
     bool promotion = false;
+    bool sidebar_promotion = false;
     bool waiting_promotion = false;
+    bool piece_eat = false;
     int moves_counter = 1;
+    enum PieceTypes promotionPieceType = PAWN;
     int turn;
     int pieces_number;
     int old_x, old_y;
     char row_chr = '\0';
     char col_chr = '\0';
-    char type_chr = '\0';
     vector<string> moves_text;
     
     SDL_Init(SDL_INIT_VIDEO);
@@ -310,20 +306,12 @@ int main() {
 
                                         row_chr = 'a' + (pieces[selectedPieceIndex].position.x / 80);
                                         col_chr = '8' - (pieces[selectedPieceIndex].position.y / 80);
-                                        type_chr;
-                                        switch(pieces[selectedPieceIndex].type) {
-                                            case BISHOP: type_chr = 'B'; break;
-                                            case ROOK: type_chr = 'R'; break;
-                                            case KING: type_chr = 'K'; break;
-                                            case QUEEN: type_chr = 'Q'; break;
-                                            case KNIGHT: type_chr = 'N'; break;
-                                        }
                                         waiting_promotion = true;
+                                        sidebar_promotion = true;
                                         promotion = true;
                                     }
 
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
-                                    moves_counter ++;
                                     break;
                                 }
 
@@ -419,15 +407,18 @@ int main() {
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
                                     moves_counter ++;
 
-
                                     break;
                                 }
                                     
                             }
                             
-                            check_capture(pieces, pieces[selectedPieceIndex]);
-                            bool piece_eat = (pieces.size() < pieces_number);
-
+                            check_capture(pieces, selectedPieceIndex);
+                            piece_eat = (pieces.size() < pieces_number);
+                            
+                            
+                            if (legal_moveC.Check(pieces, whiteTurn)) {
+                                check = true;
+                            }
                             
                             if (legal_moveC.Checkmate(pieces, whiteTurn)) {
                                 checkmate = true;
@@ -493,9 +484,9 @@ int main() {
                                 
                             }
                             if ((old_x != pieces[selectedPieceIndex].position.x || 
-                            old_y != pieces[selectedPieceIndex].position.y)) {
+                            old_y != pieces[selectedPieceIndex].position.y) && !promotion) {
                                 MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type,
-                                moves_text, piece_eat, short_castle, long_castle, check, checkmate, promotion, row_chr, col_chr, type_chr, whiteTurn);
+                                moves_text, piece_eat, short_castle, long_castle, check, checkmate, sidebar_promotion, row_chr, col_chr, whiteTurn, promotionPieceType);
 
                             }
                             
@@ -510,56 +501,66 @@ int main() {
             }
 
         }  
-
+        // TODO: completare promotion, manca poco
         if (promotion) {
-            rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion);
+            cout << "avvio promozion \n";
+            rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion, promotionPieceType);
+            cout << "fine promozione \n";
+            promotion = false;
+            waiting_promotion = false;
+            piece_eat = (pieces.size() < pieces_number);
 
-            bool piece_eat = (pieces.size() < pieces_number);
-            
+            MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type,
+            moves_text, piece_eat, short_castle, long_castle, check, checkmate, sidebar_promotion, row_chr, col_chr, whiteTurn, promotionPieceType);
+
+            moves_counter++;
+            sidebar_promotion = false;
         }
-        else {
 
+        if (!promotion && !waiting_promotion) {
             if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
                 DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
             }
     
             Rendering(renderer, pieces);
 
-        }
-
-        //TODO: sistemare problema promotion e completare sidebar
-        // sidebar text
-        SDL_Color white = {255, 255, 255, 255};
-        int spacing;
-        for (int i = 0; i < moves_text.size(); i++) {
-            
-            SDL_Surface *text_surface = TTF_RenderText_Solid(font, moves_text[i].c_str(), strlen(moves_text[i].c_str()), white);
-            spacing = (i * 25);
-            if (text_surface) {
+        
+            //TODO: sistemare problema promotion e completare sidebar
+            // sidebar text
+        //}
+        
+            SDL_Color white = {255, 255, 255, 255};
+            int spacing;
+            for (int i = 0; i < moves_text.size(); i++) {
                 
-                SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
-                SDL_FRect text_rect = {680, float(45 + spacing), (float)text_surface->w, (float)text_surface->h};
-                SDL_DestroySurface(text_surface);
+                SDL_Surface *text_surface = TTF_RenderText_Solid(font, moves_text[i].c_str(), strlen(moves_text[i].c_str()), white);
+                spacing = (i * 25);
+                if (text_surface) {
+                    
+                    SDL_Texture *text_tex = SDL_CreateTextureFromSurface(renderer, text_surface);
+                    SDL_FRect text_rect = {680, float(45 + spacing), (float)text_surface->w, (float)text_surface->h};
+                    SDL_DestroySurface(text_surface);
+                    
+                    SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
+                    SDL_DestroyTexture(text_tex);
+                }
                 
-                SDL_RenderTexture(renderer, text_tex, NULL, &text_rect);
-                SDL_DestroyTexture(text_tex);
             }
-
-        }
+            string turn_text = whiteTurn ? "Turn: White" : "Turn: Black";
+            SDL_Surface *turn_surface = TTF_RenderText_Solid(font, turn_text.c_str(), strlen(turn_text.c_str()), white);
             
-        string turn_text = whiteTurn ? "Turn: White" : "Turn: Black";
-        SDL_Surface *turn_surface = TTF_RenderText_Solid(font, turn_text.c_str(), strlen(turn_text.c_str()), white);
-    
-        if (turn_surface) {
-            SDL_Texture* turn_tex = SDL_CreateTextureFromSurface(renderer, turn_surface);
-            SDL_FRect turn_rect = {680, 10, (float)turn_surface->w, (float)turn_surface->h};
-            SDL_DestroySurface(turn_surface);
-    
-            SDL_RenderTexture(renderer, turn_tex, NULL, &turn_rect);
-            SDL_DestroyTexture(turn_tex);
-        }
-
+            if (turn_surface) {
+                SDL_Texture* turn_tex = SDL_CreateTextureFromSurface(renderer, turn_surface);
+                SDL_FRect turn_rect = {680, 10, (float)turn_surface->w, (float)turn_surface->h};
+                SDL_DestroySurface(turn_surface);
+                
+                SDL_RenderTexture(renderer, turn_tex, NULL, &turn_rect);
+                SDL_DestroyTexture(turn_tex);
+            }
+            
+        }    
         SDL_RenderPresent(renderer);
+        
         
     }                                                                       
 

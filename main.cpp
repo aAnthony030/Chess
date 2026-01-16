@@ -415,7 +415,7 @@ int main() {
                             check_capture(pieces, selectedPieceIndex);
                             piece_eat = (pieces.size() < pieces_number);
                             
-                            
+
                             if (legal_moveC.Check(pieces, whiteTurn)) {
                                 check = true;
                             }
@@ -503,31 +503,26 @@ int main() {
         }  
         // TODO: completare promotion, manca poco
         if (promotion) {
-            cout << "avvio promozion \n";
             rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion, promotionPieceType);
-            cout << "fine promozione \n";
             promotion = false;
-            waiting_promotion = false;
             piece_eat = (pieces.size() < pieces_number);
-
+            
             MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type,
             moves_text, piece_eat, short_castle, long_castle, check, checkmate, sidebar_promotion, row_chr, col_chr, whiteTurn, promotionPieceType);
-
+                
             moves_counter++;
+            waiting_promotion = false;
             sidebar_promotion = false;
         }
 
-        if (!promotion && !waiting_promotion) {
+        else if (!promotion && !waiting_promotion) {
             if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
                 DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
             }
     
             Rendering(renderer, pieces);
-
-        
-            //TODO: sistemare problema promotion e completare sidebar
+ 
             // sidebar text
-        //}
         
             SDL_Color white = {255, 255, 255, 255};
             int spacing;
@@ -558,9 +553,8 @@ int main() {
                 SDL_DestroyTexture(turn_tex);
             }
             
-        }    
         SDL_RenderPresent(renderer);
-        
+        }
         
     }                                                                       
 

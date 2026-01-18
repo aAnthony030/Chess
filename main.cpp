@@ -1,7 +1,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-//#include <SDL3_mixer/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 #include <utility>
@@ -184,18 +183,7 @@ int main() {
         cerr << "Errore caricamento font: " << SDL_GetError() << endl;
         return 1;
     }
-    /*
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        cerr << "Errore Mix_OpenAudio: " << Mix_GetError() << endl;
-    }
-
-    Mix_Chunk* = movement_sound = Mix_LoadWAV("/sounds/movement_sound.waw");
-    Mix_Chunk* = victory = Mix_LoadWAW("/sounds/chess_victory.waw");
-
-    if (!movement_sound || !victory) {
-        ceer << "Errore caricamento suoni: " << Mig_GetError() << endl;
-    }
-    */
+    
     vector<Piece> pieces = PiecesTexture(renderer);
     int selectedPieceIndex;
 

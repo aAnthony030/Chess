@@ -1,0 +1,4 @@
+main.exe
+*.dll
+SDL3/
+miniaudio-0.11.24/

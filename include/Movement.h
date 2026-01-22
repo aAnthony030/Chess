@@ -10,7 +10,7 @@ class Movement {
 
     public:
 
-        void movement(T event, vector<pair<float,float>> moves, Piece& piece, vector<Piece>& pieces, bool& whiteTurn) {
+        void movement(T event, vector<pair<float,float>> moves, Piece& piece, vector<Piece>& pieces, bool& whiteTurn, bool& piece_moved) {
             const int cellsize = 80;
             int tempX = piece.position.x;
             int tempY = piece.position.y;
@@ -31,7 +31,8 @@ class Movement {
             if(tempX != piece.position.x  || tempY != piece.position.y) {
 
                 whiteTurn = !whiteTurn;
-
+                piece_moved = true;
+                
             }
             //en passant check
             if (piece.type == PAWN) {

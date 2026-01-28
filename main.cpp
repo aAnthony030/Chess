@@ -37,14 +37,14 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
                 *blackRookTexture, *blackPawnTexture, *blackKingTexture, 
                 *blackQueenTexture, *blackBishopTexture, *blackKnightTexture;   
     vector<Piece> pieces;
-    //pezzi bianchi
+    // white pieces
     whiteRookTexture = IMG_LoadTexture(renderer, "pieces/white-rook.png");
     whitePawnTexture = IMG_LoadTexture(renderer, "pieces/white-pawn.png");
     whiteKingTexture = IMG_LoadTexture(renderer, "pieces/white-king.png");
     whiteQueenTexture = IMG_LoadTexture(renderer, "pieces/white-queen.png");
     whiteBishopTexture = IMG_LoadTexture(renderer, "pieces/white-bishop.png");
     whiteKnightTexture = IMG_LoadTexture(renderer, "pieces/white-knight.png");
-    //pezzi neri
+    // black pieces
     blackRookTexture = IMG_LoadTexture(renderer, "pieces/black-rook.png");
     blackPawnTexture = IMG_LoadTexture(renderer, "pieces/black-pawn.png");
     blackKingTexture = IMG_LoadTexture(renderer, "pieces/black-king.png");
@@ -54,48 +54,48 @@ vector<Piece> PiecesTexture(SDL_Renderer* renderer) {
 
 
     for(int i = 0; i < 8; i++) {
-        // pieces[0] -> pieces[7]: pedoni bianchi
+        // pieces[0] -> pieces[7]: white pawns
         pieces.push_back({whitePawnTexture, true, PAWN, { float(80*i), float(480), float(80), float(80) } });
     }
 
     for(int i = 0; i < 2; i++) {
-        // pieces[8] -> pieces[9]: torri bianche
+        // pieces[8] -> pieces[9]: white rooks
         pieces.push_back({whiteRookTexture, true, ROOK, { float(i*560), float(560), float(80), float(80) } });
     }
 
     for(int i = 0; i <= 1; i++) {
-        // pieces[10] -> pieces[11]: cavalli bianchi
+        // pieces[10] -> pieces[11]: white horses
         pieces.push_back({whiteKnightTexture, true, KNIGHT, { float(80 + 400*i), float(560), float(80), float(80) } });
     }
 
     for(int i = 0; i <= 1; i++) {
-        // pieces[12] -> pieces[13]: alfieri bianchi
+        // pieces[12] -> pieces[13]: white bishops
         pieces.push_back({whiteBishopTexture, true, BISHOP, { float(160 + 240*i), float(560), float(80), float(80) } });
     }
-    pieces.push_back({whiteQueenTexture, true, QUEEN, { float(240), float(560), float(80), float(80) } }); //pieces[14]: regina bianca
-    pieces.push_back({whiteKingTexture, true, KING, { float(320), float(560), float(80), float(80) } }); // pieces[15]: re bianco
+    pieces.push_back({whiteQueenTexture, true, QUEEN, { float(240), float(560), float(80), float(80) } }); //pieces[14]: white queen
+    pieces.push_back({whiteKingTexture, true, KING, { float(320), float(560), float(80), float(80) } }); // pieces[15]: white king
 
     for(int i = 0; i < 8; i++) {
-        // pieces[16] -> pieces[23]: pedoni neri
+        // pieces[16] -> pieces[23]: black pawns
         pieces.push_back({blackPawnTexture, false, PAWN, { float(80*i), float(80), float(80), float(80) } });
     }
 
     for(int i = 0; i < 2; i++) {
-        // pieces[24] -> pieces[25]: torri nere
+        // pieces[24] -> pieces[25]: black rocks
         pieces.push_back({blackRookTexture, false, ROOK, { float(i*560), float(0), float(80), float(80) } });
     }
 
     for(int i = 0; i <= 1 ; i++) {
-        // pieces[26] -> pieces[27]: cavalli neri
+        // pieces[26] -> pieces[27]: black horses
         pieces.push_back({blackKnightTexture, false, KNIGHT, { float(80 + 400*i), float(0), float(80), float(80) } });
     }
 
     for(int i = 0; i <= 1; i++) {
-        // pieces[28] -> pieces[29]: alfieri neri
+        // pieces[28] -> pieces[29]: black bishops
         pieces.push_back({blackBishopTexture, false, BISHOP, { float(160 + 240*i), float(0), float(80), float(80) } });
     }
-    pieces.push_back({blackQueenTexture, false, QUEEN, { float(240), float(0), float(80), float(80) } }); //pieces[30]: regina nera
-    pieces.push_back({blackKingTexture, false, KING, { float(320), float(0), float(80), float(80) } }); // pieces[31]: re nero
+    pieces.push_back({blackQueenTexture, false, QUEEN, { float(240), float(0), float(80), float(80) } }); //pieces[30]: black queen
+    pieces.push_back({blackKingTexture, false, KING, { float(320), float(0), float(80), float(80) } }); // pieces[31]: black king
 
     return pieces;
 }
@@ -155,7 +155,7 @@ int main() {
     char col_chr = '\0';
     vector<string> moves_text;
     
-    SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy"); // SDL3 non produce nessun audio
+    SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy"); // SDL3 dosnt produce audio
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
         cerr << "Errore inizializzazione SDL: " << SDL_GetError() << endl;
@@ -225,8 +225,7 @@ int main() {
                 
                 for(int i = 0; i < pieces.size(); i++) {
 
-                    // controllo per vedere che il click del mouse corrisponda  
-                    // alla casella occupata da un pezzo della scacchiera
+                    // I check to see that the mouse click corresponds to the square occupied by a chess piece
                     if( (x >= pieces[i].position.x && x <= pieces[i].position.x + pieces[i].position.w &&
                     y >= pieces[i].position.y && y <= pieces[i].position.y + pieces[i].position.h) || selectedPieceBool ) {
 
@@ -234,7 +233,7 @@ int main() {
                         if(!selectedPieceBool) {
                             selectedPieceIndex = i;
 
-                            //controllo per gestione dei turni
+                            // control to check pieces round
                             if(pieces[selectedPieceIndex].isWhite == whiteTurn) {
 
                                 switch (pieces[selectedPieceIndex].type) {
@@ -336,7 +335,6 @@ int main() {
                                         pieces_number = pieces.size();
                                         movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn, piece_moved);
 
-                                        //if (abs(old_x - pieces[selectedPieceIndex].position.x) == 160) long_castle = true;
                                         selectedPieceBool = false;
                                         if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
                                         moves_counter ++;
@@ -519,7 +517,7 @@ int main() {
             }
 
         }  
-        // TODO: completare promotion, manca poco
+        
         if (promotion) {
             rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion, promotionPieceType);
             promotion = false;

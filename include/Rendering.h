@@ -17,11 +17,11 @@ void Rendering(T* renderer, vector<Piece> pieces) {
                 SDL_FRect cell { float(col * cellsize), float(row * cellsize), float(cellsize), float(cellsize)};
     
                 if(!((row +  col) % 2)) {
-                    SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
+                    SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // white square
                 }
     
                 else {
-                    SDL_SetRenderDrawColor(renderer, 181, 136, 99, 255);  // casella scuro
+                    SDL_SetRenderDrawColor(renderer, 181, 136, 99, 255);  // black square
                 }
     
                 SDL_RenderFillRect(renderer, &cell);

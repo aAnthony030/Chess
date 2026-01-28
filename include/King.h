@@ -16,20 +16,20 @@ class King {
             const int cellsize = 80;
 
 
-            possibleMoves.push_back({piece.position.x, piece.position.y - cellsize}); // Re avanti
-            possibleMoves.push_back({piece.position.x, piece.position.y + cellsize}); // Re indietro
-            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y}); // Re sinistra
-            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y}); // Re destra
-            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y - cellsize}); // Re in alto sinistra
-            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y - cellsize}); // Re in alto destra
-            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + cellsize}); // Re in basso sinistra
-            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + cellsize}); // Re in basso destra
+            possibleMoves.push_back({piece.position.x, piece.position.y - cellsize}); // king forward
+            possibleMoves.push_back({piece.position.x, piece.position.y + cellsize}); // king backward
+            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y}); // king left
+            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y}); // king right
+            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y - cellsize}); // king up left
+            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y - cellsize}); // king up right
+            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + cellsize}); // king bottom left
+            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + cellsize}); // king bottom right
             if (castling(piece, pieces, true)) {
-                possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y}); // arrocco corto
+                possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y}); // short castling
                 short_castle = true;
             }
             if (castling(piece, pieces, false)) {
-                possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y}); // arrocco lungo
+                possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y}); // long castling
                 long_castle = true;
             }
 

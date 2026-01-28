@@ -27,7 +27,7 @@ class Movement {
                 }
                 
             }
-            // controllo che il pezzo sia stato spostato e non deselezionato
+            // check that piece has been moved and not deselected
             if(tempX != piece.position.x  || tempY != piece.position.y) {
 
                 whiteTurn = !whiteTurn;
@@ -53,7 +53,7 @@ class Movement {
 
             }
 
-            //arrocco
+            // castling
             if (piece.type == KING && piece.first_move) {
                 if (piece.position.x == 480 && (piece.position.y == 0 || piece.position.y == 560)) {
                     for (int i = pieces.size() - 1; i >= 0; i--) {

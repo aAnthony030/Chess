@@ -16,14 +16,14 @@ class Knight {
             vector<pair<float,float>> possibleMoves;
             const int cellsize = 80;
 
-            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y - (2 * cellsize)}); // Cavallo avanti destra (2 in alto 1 a destra)
-            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y - (2 * cellsize)}); // Cavallo avanti sinistra (2 in alto 1 a sinistra)
+            possibleMoves.push_back({piece.position.x + cellsize, piece.position.y - (2 * cellsize)}); // Horse forward right (2 up 1 right)
+            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y - (2 * cellsize)}); // Horse bottom right (2 bottom 1 right)
             possibleMoves.push_back({piece.position.x + cellsize, piece.position.y + (2 * cellsize)}); // Cavallo in basso destra (2 in basso 1 a destra)
-            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + (2 * cellsize)}); // Cavallo in basso sinistra (2 in basso 1 a sinistra)
-            possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y - cellsize}); // Cavallo avanti destra (1 in alto 2 a destra)
-            possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y - cellsize}); // Cavallo avanti sinistra (1 in alto 2 a sinistra)
-            possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y + cellsize}); // Cavallo in basso destra (1 in basso 2 a sinistra)
-            possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y + cellsize}); // Cavallo in basso sinistra (1 in basso 2 a sinistra)
+            possibleMoves.push_back({piece.position.x - cellsize, piece.position.y + (2 * cellsize)}); // Horse bottom left (2 bottom 1 left)
+            possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y - cellsize}); // Horse forward right (1 up 2 right)
+            possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y - cellsize}); // Horse forward left (1 up 2 left)
+            possibleMoves.push_back({piece.position.x + (2 * cellsize), piece.position.y + cellsize}); // Horse bottom right (1 bottom 2 left)
+            possibleMoves.push_back({piece.position.x - (2 * cellsize), piece.position.y + cellsize}); // Horse bottom left (1 bottom 2 left)
             
             return possibleMoves;
 

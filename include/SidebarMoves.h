@@ -17,7 +17,7 @@ bool& check, bool& checkmate, bool promotion, char prom_row_chr, char prom_col_c
     int col = int(move.second) / 80;
 
     char row_chr = 'a' + row;
-    char col_chr = '8' - col; // parto dalla fine perchè y = 0 indica la fine della scacchiera
+    char col_chr = '8' - col; // i start from the end because y = 0 indicate the finish of the chessboard
     char type_chr;
     string turn = whiteTurn ? "BLACK: " : "WHITE: ";
 
@@ -163,7 +163,7 @@ void MovesHistory(pair<float, float> move, enum PieceTypes type, vector<string>&
 bool& short_castle, bool& long_castle, bool& check, bool& checkmate, bool promotion, char row_chr, char col_chr, 
 bool whiteTurn, enum PieceTypes& promotionPieceType) {
     
-    const int MAX_MOVES = 15; // mosse massime visualizabili
+    const int MAX_MOVES = 15; // max moves viewable
     char promotionPieceType_chr = 'P';
     if (promotion) {
 

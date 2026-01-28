@@ -10,7 +10,7 @@ using PieceTypes::ROOK;
 using PieceTypes::KING;
 
 
-// singoloPiece, pezzo che fa doppio movimento - enemy_pieces, pezzo che può mangiare il prossimo turno
+// singlePiece, a piece that moves twice - enemy_pieces, a piece that can eat next turn
 bool en_passant(Piece singoloPiece, vector<Piece>& enemy_pieces, pair<float,float> move) {
 
     int dir = singoloPiece.isWhite ? -80 : 80;
@@ -19,7 +19,7 @@ bool en_passant(Piece singoloPiece, vector<Piece>& enemy_pieces, pair<float,floa
         
         if (enemy_pieces[i].type != PAWN || enemy_pieces[i].isWhite == singoloPiece.isWhite || !enemy_pieces[i].vulnerable_enPassant) continue;
 
-            //controllo se è valido l'en passant
+            // en passant check
             if (enemy_pieces[i].vulnerable_enPassant &&
             enemy_pieces[i].position.y == singoloPiece.position.y &&
             abs(enemy_pieces[i].position.x - singoloPiece.position.x) == 80 &&

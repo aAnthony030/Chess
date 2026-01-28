@@ -14,7 +14,7 @@ using PieceTypes::ROOK;
 using PieceTypes::QUEEN;
 using PieceTypes::KING;
 
-// se si prova a chiudere il programma quando è in fase di selezione non viene permesso
+//TODO: se si prova a chiudere il programma quando è in fase di selezione non viene permesso
 void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion, enum PieceTypes& promotionPieceType) {
     const int cellsize = 80;
     SDL_Texture* textures[4] = {
@@ -28,7 +28,7 @@ void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window,
     bool chosen = false;
     while (!chosen) {
         
-        SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
+        SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // white background
         SDL_RenderClear(renderer);
     
         for (int i = 0; i < 4; i++) {

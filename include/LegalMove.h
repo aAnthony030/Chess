@@ -23,7 +23,7 @@ class LegalMove {
             for (int i = moves.size() - 1; i >= 0 ; i--) {
                 invalid = false;
 
-                // Controllo che la mossa sia dentro la scacchiera
+                // Check that the move is inside the chessboard
                 if (moves[i].first < 0 || moves[i].first > 560 ||
                 moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
@@ -57,14 +57,12 @@ class LegalMove {
     
                     }
     
-                    // Regole pedoni:
+                    // pawns rules
                     if (isForward) {
-                        // In avanti → deve essere libera
                         if (occupied) invalid = true;
                     }
     
                     else if (isDiagonal) {
-                        // In diagonale solo se c'è un nemico o se è valido l'en passant
                         if (!occupiedByEnemy && !en_passant(singoloPiece, pieces, moves[i]))  {
                             invalid = true;
                         }
@@ -93,7 +91,7 @@ class LegalMove {
             for (int i = moves.size() - 1; i >= 0 ; i--) {
                 invalid = false;
 
-                // Controllo che la mossa sia dentro la scacchiera
+                // Check that the move is inside the chessboard
                 if (moves[i].first < 0 || moves[i].first > 560 ||
                 moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
@@ -135,7 +133,7 @@ class LegalMove {
             for (int i = moves.size() - 1; i >= 0 ; i--) {
                 invalid = false;
 
-                // Controllo che la mossa sia dentro la scacchiera
+                // Check that the move is inside the chessboard
                 if (moves[i].first < 0 || moves[i].first > 560 ||
                 moves[i].second < 0 || moves[i].second > 560) {
                     invalid = true;
@@ -208,13 +206,13 @@ class LegalMove {
                 }
 
             }
-            // uso reverse in quanto nel ciclo itero moves partendo dall'ultimo elemento
+            // I use reverse because in the iterative loop it moves starting from the last element
             reverse(dx_moves.begin(), dx_moves.end());
             reverse(sx_moves.begin(), sx_moves.end());
             reverse(up_moves.begin(), up_moves.end());
             reverse(down_moves.begin(), down_moves.end());
 
-            // mosse su
+            // up moves
             for (int i = 0; i < up_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -237,7 +235,7 @@ class LegalMove {
 
             }
 
-            // mosse giù
+            // bottom moves
             for (int i = 0; i < down_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -260,7 +258,7 @@ class LegalMove {
 
             }
 
-            // mosse destra
+            // right moves
             for (int i = 0; i < dx_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -283,7 +281,7 @@ class LegalMove {
             
             }
 
-            // mosse sinistra
+            // left moves
             for (int i = 0; i < sx_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -362,7 +360,7 @@ class LegalMove {
 
             }
 
-            // uso reverse in quanto nel ciclo itero moves partendo dall'ultimo elemento
+            // I use reverse because in the iterative loop it moves starting from the last element
             reverse(upr_moves.begin(), upr_moves.end());
             reverse(upl_moves.begin(), upl_moves.end());
             reverse(downr_moves.begin(), downr_moves.end());
@@ -476,8 +474,8 @@ class LegalMove {
 
         }
 
-        // questa funzione ha differenza della sua origina non ha la funzione check, in quanto durante il controllo
-        // si finiva in un loop infinito
+        // This function, unlike the original one, does not have the check function, 
+        // because during the check it would end up in an infinite loop
         void checkRookMovesNoCheck(vector<Piece> pieces, vector<pair<float,float>>& moves, Piece singoloPiece) {
             
             const int cellsize = 80;
@@ -518,13 +516,13 @@ class LegalMove {
                 }
 
             }
-            // uso reverse in quanto nel ciclo itero moves partendo dall'ultimo elemento
+            // I use reverse because in the iterative loop it moves starting from the last element
             reverse(dx_moves.begin(), dx_moves.end());
             reverse(sx_moves.begin(), sx_moves.end());
             reverse(up_moves.begin(), up_moves.end());
             reverse(down_moves.begin(), down_moves.end());
 
-            // mosse su
+            // up moves
             for (int i = 0; i < up_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -547,7 +545,7 @@ class LegalMove {
 
             }
 
-            // mosse giù
+            // down moves
             for (int i = 0; i < down_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -570,7 +568,7 @@ class LegalMove {
 
             }
 
-            // mosse destra
+            // right moves
             for (int i = 0; i < dx_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -593,7 +591,7 @@ class LegalMove {
             
             }
 
-            // mosse sinistra
+            // left moves
             for (int i = 0; i < sx_moves.size() ; i++) {
 
                 for (int j = 0; j < pieces.size(); j++) {
@@ -624,8 +622,8 @@ class LegalMove {
 
         }
 
-        // questa funzione ha differenza della sua origina non ha la funzione check, in quanto durante il controllo
-        // si finiva in un loop infinito
+        // This function, unlike the original one, does not have the check function, 
+        // because during the check it would end up in an infinite loop
         void checkBishopMovesNoCheck(vector<Piece> pieces, vector<pair<float,float>>& moves, Piece singoloPiece) {
 
             const int cellsize = 80;
@@ -665,7 +663,7 @@ class LegalMove {
 
             }
 
-            // uso reverse in quanto nel ciclo itero moves partendo dall'ultimo elemento
+            // I use reverse because in the iterative loop it moves starting from the last element
             reverse(upr_moves.begin(), upr_moves.end());
             reverse(upl_moves.begin(), upl_moves.end());
             reverse(downr_moves.begin(), downr_moves.end());
@@ -771,7 +769,6 @@ class LegalMove {
 
         }
 
-        // EX endgame
         bool Check(vector<Piece>& pieces, bool whiteTurn) {
 
             Pawn pawnC;
@@ -800,8 +797,8 @@ class LegalMove {
                 moves.clear();
                 if (pieces[i].isWhite != pieces[king_index].isWhite) {
                     switch (pieces[i].type) {
-                        // visto che i pedoni mangiano solo in diagonale controlliamo solo quelle
-                        // sennò anche con il semplice movimento conta come se mangiano
+                        // since pawns only capture diagonally, we only check those moves
+                        // otherwise even a simple movement counts as if they capture
                         case PAWN: {
                             
                             int direction = pieces[i].isWhite ? -80 : 80;
@@ -877,7 +874,7 @@ class LegalMove {
 
         }
     
-        // simulo la scacchiera per testare ogni possibile mossa e vedere se protegge il re
+        // I simulate the chessboard to test every possible move and see if it protects the king
         bool isMoveLegal(Piece singoloPiece, vector<Piece> pieces, pair<float,float> move) {
 
             for (int i = 0; i < pieces.size(); i++) {
@@ -929,8 +926,8 @@ class LegalMove {
                 moves.clear();
 
                 switch (pieces[i].type) {
-                    // visto che i pedoni mangiano solo in diagonale controlliamo solo quelle
-                    // sennò anche con il semplice movimento conta come se mangiano
+                    // since pawns only capture diagonally, we only check those moves, 
+                    // otherwise even a simple movement counts as if they capture.
                     case PAWN: 
 
                         moves = pawnC.pawn_movement(pieces[i], pieces);
@@ -995,7 +992,7 @@ class LegalMove {
 
         
         bool Stall(vector<Piece> pieces, bool whiteTurn) {
-            // se il re non è sotto scacco e nessun pezzo a mosse possibili avviene lo stallo
+            // if king is not under check and no pieces has avaiable moves stall occures
             if (Check(pieces, whiteTurn)) {
                 return false;
             }

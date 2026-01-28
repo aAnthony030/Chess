@@ -521,9 +521,7 @@ int main() {
         }  
         // TODO: completare promotion, manca poco
         if (promotion) {
-            cout << "MAIN: entro rendering promotion\n";
             rendering_promote(pieces[selectedPieceIndex], renderer, window, promotion, promotionPieceType);
-            cout << "MAIN: esco rendering promotion\n";
             promotion = false;
             piece_eat = (pieces.size() < pieces_number);
             

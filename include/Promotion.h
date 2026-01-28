@@ -17,7 +17,6 @@ using PieceTypes::KING;
 // se si prova a chiudere il programma quando è in fase di selezione non viene permesso
 void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion, enum PieceTypes& promotionPieceType) {
     const int cellsize = 80;
-    std::cout << "sono dentro rendering_promote\n";
     SDL_Texture* textures[4] = {
         piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-rook.png") : IMG_LoadTexture(renderer, "pieces/black-rook.png"),
         piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-queen.png") : IMG_LoadTexture(renderer, "pieces/black-queen.png"),
@@ -25,19 +24,19 @@ void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window,
         piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-knight.png") : IMG_LoadTexture(renderer, "pieces/black-knight.png")
     };
 
-    SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
-    SDL_RenderClear(renderer);
-
-    for (int i = 0; i < 4; i++) {
-        SDL_FRect cordinate = {float(i*cellsize), float(0), float(cellsize), float(cellsize) };
-        SDL_RenderTexture(renderer, textures[i], nullptr, &cordinate);
-    }
-    
-    SDL_RenderPresent(renderer);
-    std::cout << "SDL_RenderPresent attivo\n";
     SDL_Event event;
     bool chosen = false;
     while (!chosen) {
+        
+        SDL_SetRenderDrawColor(renderer, 240, 217, 181, 255); // casella chiaro
+        SDL_RenderClear(renderer);
+    
+        for (int i = 0; i < 4; i++) {
+            SDL_FRect cordinate = {float(i*cellsize), float(0), float(cellsize), float(cellsize) };
+            SDL_RenderTexture(renderer, textures[i], nullptr, &cordinate);
+        }
+        
+        SDL_RenderPresent(renderer);
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {

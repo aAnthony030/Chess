@@ -17,7 +17,7 @@ using PieceTypes::KING;
 // se si prova a chiudere il programma quando è in fase di selezione non viene permesso
 void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window, bool& promotion, enum PieceTypes& promotionPieceType) {
     const int cellsize = 80;
-
+    std::cout << "sono dentro rendering_promote\n";
     SDL_Texture* textures[4] = {
         piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-rook.png") : IMG_LoadTexture(renderer, "pieces/black-rook.png"),
         piece.isWhite ? IMG_LoadTexture(renderer, "pieces/white-queen.png") : IMG_LoadTexture(renderer, "pieces/black-queen.png"),
@@ -34,7 +34,7 @@ void rendering_promote(Piece& piece, SDL_Renderer* renderer, SDL_Window* window,
     }
     
     SDL_RenderPresent(renderer);
-
+    std::cout << "SDL_RenderPresent attivo\n";
     SDL_Event event;
     bool chosen = false;
     while (!chosen) {

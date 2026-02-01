@@ -158,52 +158,64 @@ int main() {
     SDL_SetHint(SDL_HINT_AUDIO_DRIVER, "dummy"); // SDL3 dosnt produce audio
     SDL_Init(SDL_INIT_VIDEO);
     if(!SDL_Init(SDL_INIT_VIDEO) ){
-        cerr << "Errore inizializzazione SDL: " << SDL_GetError() << endl;
+        cerr << "Error initialitation SDL: " << SDL_GetError() << endl;
         return 1;
     }
 
     window = SDL_CreateWindow("Chess", 840, 640, SDL_WINDOW_RESIZABLE);
     if (!window) {
-        cerr << "Errore creazione finestra: " << SDL_GetError() << endl;
+        cerr << "Error creation SDL: " << SDL_GetError() << endl;
         SDL_Quit();
         return 1;
     }
 
     renderer = SDL_CreateRenderer(window, NULL);
     if (!renderer) {
-        cerr << "Errore creazione renderer: " << SDL_GetError() << endl;
+        cerr << "Error creation renderer: " << SDL_GetError() << endl;
         SDL_Quit();
         return 1;
     }
 
     TTF_Init();
     if(!TTF_Init()) {
-        cerr << "Errore inizializzazione TTF: " << SDL_GetError() << endl;
+        cerr << "Error initialitation TTF: " << SDL_GetError() << endl;
         return 1;
     }
     
-    TTF_Font *font = TTF_OpenFont("C:\\Windows\\Fonts\\arial.ttf", 22);
+    TTF_Font *font = TTF_OpenFont("font/arial.ttf", 22);
     if (!font) {
-        cerr << "Errore caricamento font: " << SDL_GetError() << endl;
+        cerr << "Error font loading: " << SDL_GetError() << endl;
         return 1;
     }
     
     ma_engine engine = {0};
     ma_sound movement_sound = {0};
     ma_sound victory_sound = {0};
+    ma_sound eat_sound = {0};
+    ma_sound stall_draw_sound = {0};
 
     if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
-        cerr << "Errore inizializzazzione audio" << endl;
+        cerr << "Error audio initialitation" << endl;
         return 1;
     }
 
     if (ma_sound_init_from_file(&engine, "sounds/chess_victory.wav", 0, NULL, NULL, &victory_sound) != MA_SUCCESS) {
-        cerr << "Errore caricamento movement" << endl;
+        cerr << "Error victory sound loading" << endl;
         return 1;
     }
     
     if (ma_sound_init_from_file(&engine, "sounds/movement_sound.wav", 0, NULL, NULL, &movement_sound) != MA_SUCCESS) {
-        cerr << "Errore caricamento victory" << endl;
+        cerr << "Error movement sound loading" << endl;
+        return 1;
+    }
+
+    if (ma_sound_init_from_file(&engine, "sounds/eat_sound.wav", 0, NULL, NULL, &eat_sound) != MA_SUCCESS) {
+        cerr << "Error eat sound loading" << endl;
+        return 1;
+    }
+
+    if (ma_sound_init_from_file(&engine, "sounds/eat_sound.wav", 0, NULL, NULL, &stall_draw_sound) != MA_SUCCESS) {
+        cerr << "Error stall_draw sound loading" << endl;
         return 1;
     }
 
@@ -425,7 +437,12 @@ int main() {
                             check_capture(pieces, selectedPieceIndex);
                             piece_eat = (pieces.size() < pieces_number);
                             
-                            if (piece_moved) {
+                            if (piece_eat) {
+                                ma_sound_seek_to_pcm_frame(&eat_sound, 0);
+                                ma_sound_start(&eat_sound);
+                            }
+
+                            if (piece_moved && !piece_eat) {
                                 ma_sound_seek_to_pcm_frame(&movement_sound, 0);
                                 ma_sound_start(&movement_sound);
                                 piece_moved = false;
@@ -442,10 +459,14 @@ int main() {
                             }
                             
                             if (legal_moveC.Stall(pieces, whiteTurn)) {
+                                ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                ma_sound_start(&stall_draw_sound);
                                 cout << "STALL\n";
                             }
                             
                             if (pieces.size() == 2 && pieces[0].type == KING && pieces[1].type == KING) {
+                                ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                ma_sound_start(&stall_draw_sound);
                                 cout << "DRAW\n";
                                 draw_bool = true;
                             }
@@ -469,6 +490,8 @@ int main() {
                                 }
                                 
                                 if (kings == 2 && (bishop == 1 || knight == 1)) {
+                                    ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                    ma_sound_start(&stall_draw_sound);
                                     cout << "DRAW\n";
                                     draw_bool = true;
                                 }
@@ -492,6 +515,8 @@ int main() {
                                 }
                                 
                                 if (kings == 2 && (bishop == 2 || knight == 2)) {
+                                    ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                    ma_sound_start(&stall_draw_sound);
                                     cout << "DRAW\n";
                                     draw_bool = true;
                                 }
@@ -499,6 +524,7 @@ int main() {
                                 turn = moves_counter / 2;
                                 
                             }
+
                             if ((old_x != pieces[selectedPieceIndex].position.x || 
                             old_y != pieces[selectedPieceIndex].position.y) && !promotion) {
                                 MovesHistory({pieces[selectedPieceIndex].position.x, pieces[selectedPieceIndex].position.y}, pieces[selectedPieceIndex].type,

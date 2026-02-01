@@ -112,12 +112,12 @@ bool& check, bool& checkmate, bool promotion, char prom_row_chr, char prom_col_c
         return chess_notation;
     }
     else if(long_castle &&  check) {
-        string chess_notation = turn + "O-O-0+";
+        string chess_notation = turn + "O-O-O+";
         long_castle = false;
         return chess_notation;
     }
     else if (long_castle) {
-        string chess_notation = turn + "O-O-0";
+        string chess_notation = turn + "O-O-O";
         long_castle = false;
         return chess_notation;
     }

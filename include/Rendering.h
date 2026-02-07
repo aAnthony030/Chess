@@ -36,9 +36,7 @@ void Rendering(T* renderer, vector<Piece> pieces) {
                 SDL_RenderTexture(renderer, pieces[i].texture, nullptr, &pieces[i].position);
             }
                 
-    
         }
-        SDL_RenderPresent(renderer);
 
 }
 

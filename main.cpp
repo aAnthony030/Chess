@@ -146,6 +146,7 @@ int main() {
     bool waiting_promotion = false;
     bool piece_eat = false;
     bool piece_moved = false;
+    bool end_game = false;
     int moves_counter = 1;
     enum PieceTypes promotionPieceType = PAWN;
     int turn;
@@ -243,6 +244,7 @@ int main() {
 
                         
                         if(!selectedPieceBool) {
+                            piece_moved = false;
                             selectedPieceIndex = i;
 
                             // control to check pieces round
@@ -312,30 +314,34 @@ int main() {
                                     old_y = pieces[selectedPieceIndex].position.y;
                                     pieces_number = pieces.size();
                                     movementC.movement(event, moves, pieces[selectedPieceIndex], pieces, whiteTurn, piece_moved);
-
+                                    selectedPieceBool = false;
                                     int delta_y = abs(old_y - pieces[selectedPieceIndex].position.y);
                                     
+                                    
+                                    
+                                    if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && 
+                                    pieces[selectedPieceIndex].position.y >= 560)) {
+                                            
+                                            row_chr = 'a' + (pieces[selectedPieceIndex].position.x / 80);
+                                            col_chr = '8' - (pieces[selectedPieceIndex].position.y / 80);
+                                            waiting_promotion = true;
+                                            sidebar_promotion = true;
+                                            promotion = true;
+                                    }
+                                        
+                                    if (piece_moved == false) break;
+                                        
                                     for(int p = 0; p < pieces.size(); p++) {
                                         pieces[p].vulnerable_enPassant = false;
                                     }
+                                        
                                     if (delta_y == 160) {
                                         pieces[selectedPieceIndex].vulnerable_enPassant = true;
                                     }
-                                    
-                                    selectedPieceBool = false;
-
-                                    if ((pieces[selectedPieceIndex].isWhite && pieces[selectedPieceIndex].position.y <= 0) || (!pieces[selectedPieceIndex].isWhite && 
-                                    pieces[selectedPieceIndex].position.y >= 560)) {
-
-                                        row_chr = 'a' + (pieces[selectedPieceIndex].position.x / 80);
-                                        col_chr = '8' - (pieces[selectedPieceIndex].position.y / 80);
-                                        waiting_promotion = true;
-                                        sidebar_promotion = true;
-                                        promotion = true;
-                                    }
-
+                                        
                                     if (pieces[selectedPieceIndex].first_move)  pieces[selectedPieceIndex].first_move = false;
                                     break;
+
                                 }
 
                                 case KING: {
@@ -437,12 +443,12 @@ int main() {
                             check_capture(pieces, selectedPieceIndex);
                             piece_eat = (pieces.size() < pieces_number);
                             
-                            if (piece_eat) {
+                            if (piece_eat && !end_game) {
                                 ma_sound_seek_to_pcm_frame(&eat_sound, 0);
                                 ma_sound_start(&eat_sound);
                             }
 
-                            if (piece_moved && !piece_eat) {
+                            if (piece_moved && !piece_eat && !end_game) {
                                 ma_sound_seek_to_pcm_frame(&movement_sound, 0);
                                 ma_sound_start(&movement_sound);
                                 piece_moved = false;
@@ -454,20 +460,29 @@ int main() {
                             
                             if (legal_moveC.Checkmate(pieces, whiteTurn)) {
                                 checkmate = true;
-                                ma_sound_seek_to_pcm_frame(&victory_sound, 0);
-                                ma_sound_start(&victory_sound);
+                                if (!end_game) {
+                                    ma_sound_seek_to_pcm_frame(&victory_sound, 0);
+                                    ma_sound_start(&victory_sound);
+                                }
+                                end_game = true;
                             }
                             
                             if (legal_moveC.Stall(pieces, whiteTurn)) {
-                                ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
-                                ma_sound_start(&stall_draw_sound);
+                                if (!end_game) {
+                                    ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                    ma_sound_start(&stall_draw_sound);
+                                }
+                                end_game = true;
                                 cout << "STALL\n";
                             }
                             
                             if (pieces.size() == 2 && pieces[0].type == KING && pieces[1].type == KING) {
-                                ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
-                                ma_sound_start(&stall_draw_sound);
+                                if (!end_game) {
+                                    ma_sound_seek_to_pcm_frame(&victory_sound, 0);
+                                    ma_sound_start(&victory_sound);
+                                }
                                 cout << "DRAW\n";
+                                end_game = true;
                                 draw_bool = true;
                             }
                             
@@ -490,9 +505,12 @@ int main() {
                                 }
                                 
                                 if (kings == 2 && (bishop == 1 || knight == 1)) {
-                                    ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
-                                    ma_sound_start(&stall_draw_sound);
+                                    if (!end_game) {
+                                        ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                        ma_sound_start(&stall_draw_sound);
+                                    }
                                     cout << "DRAW\n";
+                                    end_game = true;
                                     draw_bool = true;
                                 }
                                 
@@ -515,9 +533,13 @@ int main() {
                                 }
                                 
                                 if (kings == 2 && (bishop == 2 || knight == 2)) {
-                                    ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
-                                    ma_sound_start(&stall_draw_sound);
+
+                                    if (!end_game) {
+                                        ma_sound_seek_to_pcm_frame(&stall_draw_sound, 0);
+                                        ma_sound_start(&stall_draw_sound);
+                                    }
                                     cout << "DRAW\n";
+                                    end_game = true;
                                     draw_bool = true;
                                 }
                                 
@@ -558,11 +580,12 @@ int main() {
         }
 
         else if (!promotion && !waiting_promotion) {
+            
+            Rendering(renderer, pieces);
+
             if (selectedPieceBool && selectedPieceIndex >= 0 && selectedPieceIndex <= pieces.size() && moves.size() > 0) {
                 DrawMoves(pieces, pieces[selectedPieceIndex], moves, queen_moves, whiteTurn, renderer);
             }
-    
-            Rendering(renderer, pieces);
 
             // sidebar text
         
@@ -597,11 +620,13 @@ int main() {
             
         SDL_RenderPresent(renderer);
         }
-        
+        SDL_Delay(16); // in this way CPU dosnt get angry and its locked to 60 fps
     }                                                                       
 
     ma_sound_uninit(&movement_sound);
     ma_sound_uninit(&victory_sound);
+    ma_sound_uninit(&eat_sound);
+    ma_sound_uninit(&stall_draw_sound);
     ma_engine_uninit(&engine);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

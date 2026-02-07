@@ -58,7 +58,6 @@ pair<vector<pair<float, float>>, vector<pair<float,float>>> queen_moves, bool wh
     
         }
 
-        SDL_RenderPresent(renderer);
     }
 
 }

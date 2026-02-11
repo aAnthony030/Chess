@@ -66,7 +66,7 @@ A chess game project implemented in C++ using SDL3 and miniaudio
 
 # 🎮 How to play
 - Click on a piece to select it
-- To move te selected piece click on an highlighted square
+- To move the selected piece click on an highlighted square
 - To deselect a piece click any not-highlighted square
 - All standard chess moves are included
     - Castling

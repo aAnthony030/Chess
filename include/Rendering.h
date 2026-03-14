@@ -9,6 +9,7 @@ void Rendering(T* renderer, vector<Piece> pieces) {
         SDL_RenderClear(renderer);  
             
         int cellsize = 80;
+        SDL_Texture* button_texture = IMG_LoadTexture(renderer, "font/play_again_button.png");
     
         for(int row = 0; row < 8; row++) {
     
@@ -29,7 +30,10 @@ void Rendering(T* renderer, vector<Piece> pieces) {
     
         }
         SidebarRendering(renderer);
-            
+
+        SDL_FRect button_position = {590, 550, 300, 95};
+        SDL_RenderTexture(renderer, button_texture, nullptr, &button_position);
+
         for(int i = 0; i < pieces.size(); i++) {
     
             if(pieces[i].texture && pieces[i].alive) {
@@ -46,4 +50,4 @@ void SidebarRendering(T* renderer) {
         SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
         SDL_FRect sidebar = {640, 0, 200, 640};
         SDL_RenderFillRect(renderer, &sidebar);
-}
+} 

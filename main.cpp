@@ -223,20 +223,26 @@ int main() {
 
     vector<Piece> pieces = PiecesTexture(renderer);
     int selectedPieceIndex;
-
     while(running){
         while (SDL_PollEvent(&event)) {
-        
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
             }
-
+            
             else if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && !promotion) {
                 
                 int x = event.button.x;
                 int y = event.button.y;
-                
-                for(int i = 0; i < pieces.size(); i++) {
+
+                if (x >= 660 && x <= 815 && y >= 570 && y <= 615) {
+                    pieces = PiecesTexture(renderer);
+                    moves_counter = 1;
+                    whiteTurn = true;
+                    moves_text.clear();
+                    break;
+                }
+
+                for(int i = 0; i < pieces.size(); i++) {    
 
                     // I check to see that the mouse click corresponds to the square occupied by a chess piece
                     if( (x >= pieces[i].position.x && x <= pieces[i].position.x + pieces[i].position.w &&
@@ -559,6 +565,7 @@ int main() {
                         break;
                         
                     }
+
                     
                 }
                 

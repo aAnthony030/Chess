@@ -75,7 +75,7 @@ A chess game project implemented in C++ using SDL3 and miniaudio
     - Check, checkmate, draw, stall
     
 # 🚀 Things to improve in the future
-- [ ] Insert a restart button
+- [x] Insert a restart button
 - [ ] Insert AI opponent for making it playable single player
 - [ ] Insert timer
 
